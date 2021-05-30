@@ -1,0 +1,46 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "applicationInsightsName": {
+            "type": "string"
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-02-02-preview",
+            "name": "[parameters('applicationInsightsName')]",
+            "type": "Microsoft.Insights/components",
+            "kind": "web",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[parameters('logAnalyticsWorkspaceName')]"
+            ],
+            "properties": {
+                "applicationId": "[parameters('applicationInsightsName')]",
+                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+            }
+        },
+        {
+            "name": "[parameters('logAnalyticsWorkspaceName')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2020-08-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "name": "pergb2018"
+                },
+                "retentionInDays": 30,
+                "workspaceCapping": {
+                    "dailyQuotaGb": -1
+                }
+            }
+        }
+    ]
+}

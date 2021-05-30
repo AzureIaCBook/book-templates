@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "env": {
+            "value": "test"
+        },
+        "appServicePlanSku": {
+            "value": {
+                "capacity": 1,
+                "name": "B1"
+            }
+        },
+        "sqlSettings": {
+            "value": {
+                "sqlServerUsername": "bookdemo",
+                "sqlServerPassword": "__sqlServerPassword__",
+                "database": {
+                    "sku": {
+                        "name": "Basic",
+                        "tier": "Basic",
+                        "capacity": 5
+                    },
+                    "maxSizeBytes": 2147483648
+                }
+            }
+        },
+        "storageAccountSettings": {
+            "value": [
+                {
+                    "name": "data",
+                    "sku": {
+                        "name": "Standard_LRS",
+                        "tier": "Standard"
+                    }
+                },
+                {
+                    "name": "logging",
+                    "sku": {
+                        "name": "Standard_LRS",
+                        "tier": "Standard"
+                    }
+                }
+            ]
+        },
+        "templateSettings": {
+            "value": {
+                "location": "westeurope",
+                "storageAccountUrl": "https://boektemplates.blob.core.windows.net",
+                "storageAccountKey": "?st=2021-03-05T09%3A16%3A56Z&se=2021-03-06T09%3A16%3A56Z&sp=racwdl&sv=2018-03-28&sr=c&sig=wMp3vAas1ThMhZ4L4wTRMSFWcI6ttTH4r0z6%2FRQwfb0%3D",
+                "storageContainer": "boektemplates"
+            }
+        }
+    }
+}

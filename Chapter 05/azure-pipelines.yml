@@ -1,0 +1,72 @@
+trigger:
+  - master
+  
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  subscriptionId: <subscriptionId>
+  azureResourceManagerConnection: <azureResourceManagerConnection>
+  storageAccountName: <storageAccountName>
+  storageAccountConnectionString: $STORAGECONNECTIONSTRING
+  containerName: templates$(Build.BuildId)
+
+stages:
+- stage: 'PublishTemplates'
+  displayName: 'Publish Templates'
+  jobs: 
+    - job: 'PublishTemplates'
+      steps:
+      - task: CopyFiles@2
+        displayName: 'Copy composing to: $(build.artifactstagingdirectory)'
+        inputs:
+          Contents: | 
+            Composing/**
+            Resources/**
+          TargetFolder: '$(build.artifactstagingdirectory)/templates'
+      - task: AzureCLI@2
+        displayName: "Create container $(Build.BuildId)"
+        inputs:
+          azureSubscription: ${{ variables.azureResourceManagerConnection }}
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: 'az storage container create --connection-string "${{ variables.storageAccountConnectionString }}" -n ${{ variables.containerName }} --account-name ${{ variables.storageAccountName }}'
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: ${{ variables.azureResourceManagerConnection }}
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: 'az storage blob upload-batch --account-name ${{ variables.storageAccountName }} -d ${{ variables.containerName }} -s $(build.artifactstagingdirectory)/templates --connection-string "${{ variables.storageAccountConnectionString }}"'
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact: drop'
+- stage: 'DelployTemplates'
+  displayName: 'Deploy Templates'
+  jobs: 
+    - job: 'DelployTemplates'
+      steps:
+
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'drop'
+          downloadPath: '$(System.DefaultWorkingDirectory)'
+
+      - task: colinsalmcorner.colinsalmcorner-buildtasks.replace-tokens-task.ReplaceTokens@1
+        inputs:
+          sourcePath: '$(System.DefaultWorkingDirectory)/drop/templates/Composing/'
+          filePattern: 'Main.parameters.test.json'
+          tokenRegex: '__(\w+)__'
+
+      - task: AzureResourceManagerTemplateDeployment@3
+        inputs:
+          deploymentScope: 'Resource Group'
+          azureResourceManagerConnection: ${{ variables.azureResourceManagerConnection }}
+          subscriptionId: ${{ variables.subscriptionId }}
+          action: 'Create Or Update Resource Group'
+          resourceGroupName: 'arm-template-demo'
+          location: 'West Europe'
+          templateLocation: 'Linked artifact'
+          csmFile: '$(System.DefaultWorkingDirectory)/drop/templates/Composing/Main.json'
+          csmParametersFile: '$(System.DefaultWorkingDirectory)/drop/templates/Composing/Main.parameters.test.json'
+          deploymentMode: 'Incremental'

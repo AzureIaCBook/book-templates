@@ -1,0 +1,41 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "webappname": {
+            "type": "string"
+        },
+        "appServicePlanName": {
+            "type": "string"
+        },
+        "linuxFxVersion": {
+            "type": "string",
+            "defaultValue": "DOTNETCORE|3.1"
+        },
+        "appSettings": {
+            "type": "array"
+        },
+        "location": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('webappname')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[parameters('location')]",
+            "kind": "app,linux",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "siteConfig": {
+                    "appSettings": "[parameters('appSettings')]",
+                    "linuxFxVersion": "[parameters('linuxFxVersion')]"
+                },
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+            }
+        }
+    ]
+}

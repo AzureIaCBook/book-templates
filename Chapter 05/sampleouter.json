@@ -1,0 +1,41 @@
+{
+    "$schema": "<schema>",
+    "contentVersion": "1.0.0.0",
+    "variables": {
+        "subscriptionId": "[subscription().subscriptionId]"
+    },
+    "resources": [
+        {
+            ...
+            "name": "[variables('subscriptionId')]",
+            ...
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "InnerScopedDeployment",
+            "resourceGroup": "anotherResourceGroup",
+            "subscriptionId": "anotherSubscription",
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner or outer"
+                },
+                "template": {
+                    "$schema": "<schema>",
+                    "contentVersion": "1.0.0.0",
+                    "variables": {
+                        "subscriptionId": "[subscription().subscriptionId]"
+                    },
+                    "resources": [
+                        {
+                            ...
+                            "name": "[variables('subscriptionId')]",
+                            ...
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

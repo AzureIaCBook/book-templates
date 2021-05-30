@@ -1,0 +1,140 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "env": {
+            "type": "string"
+        },
+        "appServicePlanSku": {
+            "type": "object"
+        },
+        "keyVaultName": {
+            "type": "string"
+        },
+        "appConfigurationName": {
+            "type": "string"
+        },
+        "templateSettings": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "logAnalyticsWorkspaceName": "[concat('log-bookdemo-', parameters('env'))]",
+        "appInsightsName": "[concat('appi-bookdemo-', parameters('env'))]",
+        "webAppName": "[concat('app-bookdemo-', parameters('env'))]",
+        "webAppNamePlan": "[concat('plan-bookdemo-', parameters('env'))]",
+        "keyVaultSecretReaderRoleId": "4633458b-17de-408a-b874-0445c86b69e6", // RBAC Role: Key Vault Secrets User
+        "appConfigurationReaderRoleId": "516239f1-63e1-4d78-a4de-a74fb236a071", // RBAC Role: App Configuration Data Reader
+        "templateBasePath": "[concat(parameters('templateSettings').storageAccountUrl, '/', parameters('templateSettings').storageContainer)]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-10-01",
+            "name": "ApplicationInsight",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('templateBasePath'), '/Resources/Insights/ApplicationInsights.json')]",
+                    "queryString": "[parameters('templateSettings').storageAccountKey]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "applicationInsightsName": {
+                        "value": "[variables('appInsightsName')]"
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[variables('logAnalyticsWorkspaceName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('templateSettings').location]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-10-01",
+            "name": "Serverfarm",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('templateBasePath'), '/Resources/WebApp/Serverfarm.json')]",
+                    "queryString": "[parameters('templateSettings').storageAccountKey]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('webAppNamePlan')]"
+                    },
+                    "sku": {
+                        "value": "[parameters('appServicePlanSku')]"
+                    },
+                    "location": {
+                        "value": "[parameters('templateSettings').location]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-10-01",
+            "name": "WebApp",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "Serverfarm",
+                "ApplicationInsight"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('templateBasePath'), '/Resources/WebApp/WebApp.json')]",
+                    "queryString": "[parameters('templateSettings').storageAccountKey]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "webappname": {
+                        "value": "[variables('webAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('webAppNamePlan')]"
+                    },
+                    "appSettings": {
+                        "value": [
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), '2014-04-01').InstrumentationKey]"
+                            }
+                        ]
+                    },
+                    "location": {
+                        "value": "[parameters('templateSettings').location]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/providers/roleAssignments",
+            "apiVersion": "2018-01-01-preview",
+            "name": "[concat(parameters('keyVaultName'), '/Microsoft.Authorization/', guid(variables('webAppName'), variables('keyVaultSecretReaderRoleId')))]",
+            "dependsOn": [
+                "WebApp"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roledefinitions/', variables('keyVaultSecretReaderRoleId'))]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('webAppName')), '2019-08-01', 'full').identity.principalId]"
+            }
+        },
+        {
+            "type": "Microsoft.AppConfiguration/configurationStores/providers/roleAssignments",
+            "apiVersion": "2018-01-01-preview",
+            "name": "[concat(parameters('appConfigurationName'), '/Microsoft.Authorization/', guid(variables('webAppName'), variables('appConfigurationReaderRoleId')))]",
+            "dependsOn": [
+                "WebApp"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roledefinitions/', variables('appConfigurationReaderRoleId'))]",
+                "principalId": "[reference(resourceId( 'Microsoft.Web/sites', variables('webAppName')), '2019-08-01', 'full').identity.principalId]"
+            }
+        }
+    ]
+}

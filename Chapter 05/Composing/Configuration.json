@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName": {
+            "type": "string"
+        },
+        "appConfigurationName": {
+            "type": "string"
+        },
+        "templateSettings": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "templateBasePath": "[concat(parameters('templateSettings').storageAccountUrl, '/', parameters('templateSettings').storageContainer)]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-10-01",
+            "name": "KeyVault",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('templateBasePath'), '/Resources/KeyVault/KeyVault.json')]",
+                    "queryString": "[parameters('templateSettings').storageAccountKey]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultName": {
+                        "value": "[parameters('keyVaultName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('templateSettings').location]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-10-01",
+            "name": "AppConfiguration",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('templateBasePath'), '/Resources/AppConfiguration/AppConfiguration.json')]",
+                    "queryString": "[parameters('templateSettings').storageAccountKey]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appConfigurationName": {
+                        "value": "[parameters('appConfigurationName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('templateSettings').location]"
+                    }
+                }
+            }
+        }
+    ]
+}

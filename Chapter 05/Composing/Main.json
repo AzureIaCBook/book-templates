@@ -1,0 +1,117 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "env": {
+            "type": "string"
+        },
+        "appServicePlanSku": {
+            "type": "object"
+        },
+        "sqlSettings": {
+            "type": "object"
+        },
+        "storageAccountSettings": {
+            "type": "array"
+        },
+        "templateSettings": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "keyVaultName": "[concat('kv-bookdemo', '-', parameters('env'))]",
+        "appConfigurationName": "[concat('appconfig-bookdemo', '-', parameters('env'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-10-01",
+            "name": "Configuration",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "relativePath": "Configuration.json",
+                    "queryString": "[parameters('templateSettings').storageAccountKey]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultName": {
+                        "value": "[variables('keyVaultName')]"
+                    },
+                    "appConfigurationName": {
+                        "value": "[variables('appConfigurationName')]"
+                    },
+                    "templateSettings": {
+                        "value": "[parameters('templateSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-10-01",
+            "name": "API",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "Configuration"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "relativePath": "Api.json",
+                    "queryString": "[parameters('templateSettings').storageAccountKey]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "env": {
+                        "value": "[parameters('env')]"
+                    },
+                    "appServicePlanSku": {
+                        "value": "[parameters('appServicePlanSku')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[variables('keyVaultName')]"
+                    },
+                    "appConfigurationName": {
+                        "value": "[variables('appConfigurationName')]"
+                    },
+                    "templateSettings": {
+                        "value": "[parameters('templateSettings')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-10-01",
+            "name": "Storage",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "Configuration"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "relativePath": "Storage.json",
+                    "queryString": "[parameters('templateSettings').storageAccountKey]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "env": {
+                        "value": "[parameters('env')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[variables('keyVaultName')]"
+                    },
+                    "sqlSettings": {
+                        "value": "[parameters('sqlSettings')]"
+                    },
+                    "storageAccountSettings": {
+                        "value": "[parameters('storageAccountSettings')]"
+                    },
+                    "templateSettings": {
+                        "value": "[parameters('templateSettings')]"
+                    }
+                }
+            }
+        }
+    ]
+}

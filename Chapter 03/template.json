@@ -1,0 +1,222 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment": {
+            "type": "string"
+        },
+        "sqlServerUsername": {
+            "type": "string"
+        },
+        "sqlServerPassword": {
+            "type": "securestring"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "West Europe"
+        }
+    },
+    "variables": {
+        "appServiceName": "[concat('app-armbook-', parameters('environment'))]",
+        "serverFarmName": "[concat('plan-armbook-', parameters('environment'))]",
+        "keyVaultName": "[concat('kv-armbook-', parameters('environment'))]",
+        "sqlServerName": "[concat('sql-armbook-', parameters('environment'))]",
+        "sqlDatabaseName": "[concat('sqldb-armbook-', parameters('environment'))]",
+        "applicationInsightsName": "[concat('appi-armbook-', parameters('environment'))]",
+        "logAnalyticsWorkspaceName": "[concat('log-armbookappinsights-', parameters('environment'))]",
+        "keyVaultSecretReaderRoleId": "4633458b-17de-408a-b874-0445c86b69e6", // RBAC Role: Key Vault Secrets User
+        "storageAccounts": {
+            "data": {
+                "name": "[concat('starmbookdata', parameters('environment'))]",
+                "sku": {
+                    "name": "Standard_GRS",
+                    "tier": "Premium"
+                }
+            },
+            "logging": {
+                "name": "[concat('starmbooklogging', parameters('environment'))]",
+                "sku": {
+                    "name": "Standard_LRS",
+                    "tier": "Premium"
+                }
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[variables('serverFarmName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "S1",
+                "capacity": 1
+            },
+            "properties": {
+                "name": "[variables('serverFarmName')]"
+            }
+        },
+        {
+            "apiVersion": "2018-02-01",
+            "name": "[variables('appServiceName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('serverFarmName'))]",
+                "[resourceId('Microsoft.Insights/components', variables('applicationInsightsName'))]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(resourceId('Microsoft.Insights/components', variables('applicationInsightsName')), '2014-04-01').InstrumentationKey]"
+                        }
+                    ]
+                },
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverFarmName'))]"
+            }
+        },
+        {
+            "name": "[variables('logAnalyticsWorkspaceName')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2020-08-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "name": "pergb2018"
+                },
+                "retentionInDays": 30,
+                "workspaceCapping": {
+                    "dailyQuotaGb": -1
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-02-02-preview",
+            "name": "[variables('applicationInsightsName')]",
+            "type": "Microsoft.Insights/components",
+            "kind": "web",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('logAnalyticsWorkspaceName')]"
+            ],
+            "properties": {
+                "applicationId": "[variables('applicationInsightsName')]",
+                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName'))]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2016-10-01",
+            "name": "[variables('keyVaultName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "standard"
+                },
+                "accessPolicies": [],
+                "tenantId": "[subscription().tenantId]",
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": true,
+                "enableSoftDelete": true,
+                "softDeleteRetentionInDays": 90,
+                "enableRbacAuthorization": true
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/providers/roleAssignments",
+            "apiVersion": "2018-01-01-preview",
+            "name": "[concat(variables('keyVaultName'), '/Microsoft.Authorization/', guid(variables('appServiceName'), variables('keyVaultSecretReaderRoleId')))]",
+            "dependsOn": [
+                "[variables('appServiceName')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roledefinitions/', variables('keyVaultSecretReaderRoleId'))]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('appServiceName')), '2019-08-01', 'full').identity.principalId]"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/servers",
+            "name": "[variables('sqlServerName')]",
+            "apiVersion": "2019-06-01-preview",
+            "location": "[parameters('location')]",
+            "properties": {
+                "administratorLogin": "[parameters('sqlServerUsername')]",
+                "administratorLoginPassword": "[parameters('sqlServerPassword')]"
+            },
+            "resources": [
+                {
+                    "type": "databases",
+                    "apiVersion": "2017-10-01-preview",
+                    "name": "[variables('sqlDatabaseName')]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
+                    ],
+                    "sku": {
+                        "name": "Basic",
+                        "tier": "Basic",
+                        "capacity": 5
+                    },
+                    "kind": "v12.0,user",
+                    "properties": {
+                        "collation": "SQL_Latin1_General_CP1_CI_AS",
+                        "maxSizeBytes": 2147483648
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "name": "[variables('storageAccounts').data.name]",
+            "location": "[parameters('location')]",
+            "sku": "[variables('storageAccounts').data.sku]",
+            "kind": "StorageV2"
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "name": "[variables('storageAccounts').logging.name]",
+            "location": "[parameters('location')]",
+            "sku": "[variables('storageAccounts').logging.sku]",
+            "kind": "StorageV2"
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2018-02-14",
+            "name": "[concat(variables('keyVaultName'), '/', variables('storageAccounts').logging.name, 'Key')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('storageAccounts').logging.name]"
+            ],
+            "properties": {
+                "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccounts').logging.name), '2019-04-01').keys[0].value]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2018-02-14",
+            "name": "[concat(variables('keyVaultName'), '/', variables('storageAccounts').data.name, 'Key')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('storageAccounts').data.name]"
+            ],
+            "properties": {
+                "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccounts').data.name), '2019-04-01').keys[0].value]"
+            }
+        }
+    ],
+    "outputs": {
+        "sqlServerFQDN": {
+            "type": "string",
+            "value": "[reference(variables('sqlServerName')).fullyQualifiedDomainName]"
+        }
+    }
+}
