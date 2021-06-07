@@ -38,7 +38,7 @@ $tests = (Get-ChildItem -Path $($ModulePath) -Recurse | Where-Object {$_.Name -l
 
 if ($Publish) {
     $files = (Get-ChildItem -Recurse | Where-Object {$_.Name -like "*.psm1" -or $_.Name -like "*.ps1" -and $_.FullName -notlike "*\Pipelines\*"}).FullName
-    Invoke-Pester $tests -OutputFile "$ResultsPath\Test-Pester.xml" -OutputFormat NUnitXml -CodeCoverage $($files.FullName) -CodeCoverageOutputFile "$($ResultsPath)\Pester-Coverage.xml" -CodeCoverageOutputFileFormat JaCoCo
+    Invoke-Pester $tests -OutputFile "$ResultsPath\Test-Pester.xml" -OutputFormat NUnitXml -CodeCoverage $($files.FullName) -CodeCoverageOutputFile "$($ResultsPath)\Pester-Coverage.xml" -CodeCoverageOutputFileFormat JaCoCo -Tag "UnitTests" 
 } else {
     Invoke-Pester $tests
 }

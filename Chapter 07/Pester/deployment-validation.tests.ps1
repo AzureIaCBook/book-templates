@@ -15,7 +15,7 @@ BeforeAll {
     $storageAccount = Get-AzStorageAccount -Name $storageAccountName -ResourceGroupName $resoureGroupName
 }
 
-Describe "Deployment Validation" {
+Describe "Deployment Validation" -Tag "UnitTests" {
     Context "StorageAccount validation" {
 
         It "Storage account should exist" {
