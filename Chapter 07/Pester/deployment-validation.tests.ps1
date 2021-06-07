@@ -1,14 +1,18 @@
 # This test requires an authenticated session, use Connect-AzAccount to login
 
 BeforeAll {
-    New-AzResourceGroup -Name "PesterRG" -Location "West Europe" -Force | Out-Null
+    $resoureGroupName = 'PesterRG'
+    New-AzResourceGroup -Name $resoureGroupName -Location "West Europe" -Force | Out-Null
 
+    $storageAccountName = 'strpestertest'
     $TemplateParameters = @{}
-    $TemplateParameters.Add('storageAccountName', 'strpestertest')
+    $TemplateParameters.Add('storageAccountName', $storageAccountName)
+    $TemplateParameters.Add('location', 'West Europe') 
+    $TemplateParameters.Add('sku', 'Premium') 
 
-    New-AzResourceGroupDeployment -ResourceGroupName "PesterRG" -TemplateFile "azuredeploy.json" @TemplateParameters
+    New-AzResourceGroupDeployment -ResourceGroupName $resoureGroupName -TemplateFile "azuredeploy.json" @TemplateParameters
 
-    $storageAccount = Get-AzStorageAccount -Name "strpestertest" -ResourceGroupName "PesterRG"
+    $storageAccount = Get-AzStorageAccount -Name $storageAccountName -ResourceGroupName $resoureGroupName
 }
 
 Describe "Deployment Validation" {
