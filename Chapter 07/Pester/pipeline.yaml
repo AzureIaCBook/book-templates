@@ -11,6 +11,7 @@ pool:
 
 steps:
 - task: AzurePowerShell@5
+  displayName: 'Run Pester Unit tests'
   inputs:
     azureSubscription: 'Azure MVP Sponsorship'
     ScriptType: 'FilePath'
