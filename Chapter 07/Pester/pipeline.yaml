@@ -10,8 +10,28 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: Pester@10
+- task: PowerShell@2
+  displayName: 'Executing Pester Tests'
   inputs:
-    scriptFolder: '$(System.DefaultWorkingDirectory)\Chapter 07\Pester\*'
-    resultsFile: '$(System.DefaultWorkingDirectory)\Test-Pester.XML'
-    usePSCore: False
+    filePath: 'RunPester.ps1'
+    arguments: '-ModulePath $(System.DefaultWorkingDirectory)\Chapter 07\Pester -ResultsPath $(System.DefaultWorkingDirectory)\Chapter 07\Pester\Publish -Publish'
+    errorActionPreference: 'silentlyContinue'
+    ignoreLASTEXITCODE: true
+    workingDirectory: '$(System.DefaultWorkingDirectory)\Chapter 07\Pester'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish Code Coverage'
+  inputs:
+    codeCoverageTool: 'JaCoCo'
+    summaryFileLocation: '**/Pester-Coverage.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)\Chapter 07\Pester\Publish'
+    failIfCoverageEmpty: true
+
+- task: PublishTestResults@2
+  displayName: 'Publish Pester Tests'
+  inputs:
+    testResultsFormat: 'NUnit'
+    testResultsFiles: '**/Test-Pester.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)\Chapter 07\Pester\Publish'
+    mergeTestResults: true
+    failTaskOnFailedTests: true
