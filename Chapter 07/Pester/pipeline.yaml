@@ -14,9 +14,9 @@ steps:
   displayName: 'Executing Pester Tests'
   inputs:
     filePath: '$(System.DefaultWorkingDirectory)/Chapter 07/Pester/RunPester.ps1'
-    arguments: '-ModulePath $(System.DefaultWorkingDirectory)/Chapter 07/Pester -ResultsPath $(System.DefaultWorkingDirectory)\Chapter 07\Pester\Publish -Publish'
-    errorActionPreference: 'silentlyContinue'
-    ignoreLASTEXITCODE: true
+    arguments: '-ModulePath "$(System.DefaultWorkingDirectory)/Chapter 07/Pester" -ResultsPath "$(System.DefaultWorkingDirectory)\Chapter 07\Pester\Publish" -Publish'
+    #errorActionPreference: 'silentlyContinue'
+    #ignoreLASTEXITCODE: true
     workingDirectory: '$(System.DefaultWorkingDirectory)/Chapter 07/Pester'
 
 - task: PublishCodeCoverageResults@1
