@@ -32,7 +32,9 @@ if ($Publish) {
     }
 }
 
-$tests = (Get-ChildItem -Path $($ModulePath) -Recurse | Where-Object {$_.Name -like "*Tests.ps1"}).FullName
+Write-Host "Finding tests in $($ModulePath)"
+
+$tests = (Get-ChildItem -Path $($ModulePath) -Recurse | Where-Object {$_.Name -like "*tests.ps1"}).FullName
 
 if ($Publish) {
     $files = (Get-ChildItem -Recurse | Where-Object {$_.Name -like "*.psm1" -or $_.Name -like "*.ps1" -and $_.FullName -notlike "*\Pipelines\*"}).FullName
