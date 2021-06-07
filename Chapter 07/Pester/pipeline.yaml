@@ -13,7 +13,7 @@ steps:
 - task: PowerShell@2
   displayName: 'Executing Pester Tests'
   inputs:
-    filePath: 'RunPester.ps1'
+    filePath: '$(System.DefaultWorkingDirectory)/Chapter 07/Pester/RunPester.ps1'
     arguments: '-ModulePath $(System.DefaultWorkingDirectory)/Chapter 07/Pester -ResultsPath $(System.DefaultWorkingDirectory)\Chapter 07\Pester\Publish -Publish'
     errorActionPreference: 'silentlyContinue'
     ignoreLASTEXITCODE: true
