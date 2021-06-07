@@ -10,7 +10,8 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: Pester Powershell unittest@2
+- task: Pester@10
   inputs:
-    ItemSpec: '*.tests.ps1'
-    FailOnError: true
+    scriptFolder: '$(System.DefaultWorkingDirectory)\*'
+    resultsFile: '$(System.DefaultWorkingDirectory)\Test-Pester.XML'
+    usePSCore: False
