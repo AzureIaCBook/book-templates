@@ -12,6 +12,6 @@ pool:
 steps:
 - task: Pester@10
   inputs:
-    scriptFolder: '$(System.DefaultWorkingDirectory)\*'
+    scriptFolder: '$(System.DefaultWorkingDirectory)\Chapter 07\Pester\*'
     resultsFile: '$(System.DefaultWorkingDirectory)\Test-Pester.XML'
     usePSCore: False
