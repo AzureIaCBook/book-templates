@@ -7,15 +7,12 @@ param (
     [string]
     $ResultsPath
 )
-
+# Install Bicep
 curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
-# Mark it as executable
 chmod +x ./bicep
-# Add bicep to your PATH (requires admin)
 sudo mv ./bicep /usr/local/bin/bicep
-# Verify you can now access the 'bicep' command
-bicep --help
 
+# Install Pester if needed
 $pesterModule = Get-Module -Name Pester -ListAvailable | Where-Object {$_.Version -like '5.*'}
 if (!$pesterModule) { 
     try {
@@ -35,7 +32,10 @@ if (!(Test-Path -Path $ResultsPath)) {
 }
 
 Write-Host "Finding tests in $($ModulePath)"
-
 $tests = (Get-ChildItem -Path $($ModulePath) -Recurse | Where-Object {$_.Name -like "*tests.ps1"}).FullName
 
-Invoke-Pester $tests -OutputFile "$ResultsPath\Test-Pester.xml" -OutputFormat NUnitXml -Tag "UnitTests" 
+$config = [PesterConfiguration]::Default
+$config.TestResult.Enabled = $true
+$config.TestResult.OutputFile = "$ResultsPath\Test-Pester.xml"
+$config.TestResult.OutputFormat = "NUnitXml"
+Invoke-Pester $tests -Configuration $config -Tag "UnitTests" 
