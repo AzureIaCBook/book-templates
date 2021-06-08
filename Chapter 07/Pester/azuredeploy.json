@@ -4,13 +4,6 @@
     "parameters": {
         "storageAccountName": {
             "type": "string"
-        },
-        "tier": {
-            "type": "string",
-            "allowedValues": [
-                "Premium",
-                "Standard"
-            ]
         }
     },
     "functions": [],
