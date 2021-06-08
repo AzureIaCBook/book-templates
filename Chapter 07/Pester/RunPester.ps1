@@ -36,6 +36,6 @@ $tests = (Get-ChildItem -Path $($ModulePath) -Recurse | Where-Object {$_.Name -l
 
 $config = [PesterConfiguration]::Default
 $config.TestResult.Enabled = $true
-$config.TestResult.OutputFile = "$ResultsPath\Test-Pester.xml"
+$config.TestResult.OutputPath = "$ResultsPath\Test-Pester.xml"
 $config.TestResult.OutputFormat = "NUnitXml"
 Invoke-Pester $tests -Configuration $config -Tag "UnitTests" 
