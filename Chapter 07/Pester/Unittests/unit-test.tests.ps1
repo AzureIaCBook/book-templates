@@ -6,7 +6,7 @@ BeforeAll {
 
     $storageAccountName = 'unitteststr'
     $TemplateParameters = @{}
-    $TemplateParameters.Add('name', $storageAccountName)
+    $TemplateParameters.Add('storageAccountName', $storageAccountName)
     $TemplateParameters.Add('location', 'West Europe') 
     $TemplateParameters.Add('sku', 'Premium') 
 

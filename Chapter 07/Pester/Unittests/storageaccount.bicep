@@ -1,4 +1,4 @@
-param name string
+param storageAccountName string
 param location string
 
 @allowed([
@@ -20,7 +20,7 @@ var standardSku = {
 var skuCalculated = sku == 'Premium' ? premiumSku : standardSku
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
-  name: name
+  name: storageAccountName
   location: location
   sku: skuCalculated
   kind: 'StorageV2'

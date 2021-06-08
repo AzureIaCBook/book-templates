@@ -1,7 +1,7 @@
 # This test requires an authenticated session, use Connect-AzAccount to login
 
 BeforeAll {
-    New-AzResourceGroup -Name "PesterRG" -Location "West Europe" | Out-Null
+    New-AzResourceGroup -Name "PesterRG" -Location "West Europe" -Force | Out-Null
 }
 
 Describe "Content Validation" {
