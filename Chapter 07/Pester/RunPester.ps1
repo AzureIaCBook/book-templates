@@ -34,8 +34,27 @@ if (!(Test-Path -Path $ResultsPath)) {
 Write-Host "Finding tests in $($ModulePath)"
 $tests = (Get-ChildItem -Path $($ModulePath) -Recurse | Where-Object {$_.Name -like "*tests.ps1"}).FullName
 
-$config = [PesterConfiguration]::Default
-$config.TestResult.Enabled = $true
-$config.TestResult.OutputPath = "$ResultsPath\Test-Pester.xml"
-$config.TestResult.OutputFormat = "NUnitXml"
-Invoke-Pester $tests -Configuration $config -Tag "UnitTests" 
+$Params = [ordered]@{
+    Path = $tests;
+}
+
+$container = New-PesterContainer @Params
+
+$configuration = [PesterConfiguration]@{
+    Run          = @{
+        Container = $container
+    }
+    Output       = @{
+        Verbosity = 'Detailed'
+    }
+    Filter = @{
+        Tag = "UnitTests" 
+    }
+    TestResult   = @{
+        Enabled      = $true
+        OutputFormat = "NUnitXml"
+        OutputPath   = "$($ResultsPath)\Test-Pester.xml"
+    }
+}
+
+Invoke-Pester -Configuration $configuration
