@@ -16,7 +16,7 @@ steps:
     azureSubscription: 'Azure MVP Sponsorship'
     ScriptType: 'FilePath'
     ScriptPath: '$(System.DefaultWorkingDirectory)/Chapter 07/Pester/RunPester.ps1'
-    ScriptArguments: '-ModulePath "$(System.DefaultWorkingDirectory)/Chapter 07/Pester" -ResultsPath "$(System.DefaultWorkingDirectory)\Chapter 07\Pester\Publish" -Publish'
+    ScriptArguments: '-ModulePath "$(System.DefaultWorkingDirectory)/Chapter 07/Pester" -ResultsPath "$(System.DefaultWorkingDirectory)\Chapter 07\Pester\Publish"'
     azurePowerShellVersion: 'LatestVersion'
     workingDirectory: '$(System.DefaultWorkingDirectory)/Chapter 07/Pester'
 
