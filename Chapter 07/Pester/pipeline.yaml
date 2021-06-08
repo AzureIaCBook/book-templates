@@ -20,14 +20,6 @@ steps:
     azurePowerShellVersion: 'LatestVersion'
     workingDirectory: '$(System.DefaultWorkingDirectory)/Chapter 07/Pester'
 
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish Code Coverage'
-  inputs:
-    codeCoverageTool: 'JaCoCo'
-    summaryFileLocation: '**/Pester-Coverage.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)\Chapter 07\Pester\Publish'
-    failIfCoverageEmpty: true
-
 - task: PublishTestResults@2
   displayName: 'Publish Pester Tests'
   inputs:
