@@ -5,7 +5,11 @@ param (
 
     [Parameter(Mandatory=$false)]
     [string]
-    $ResultsPath
+    $ResultsPath,
+
+    [Parameter(Mandatory=$false)]
+    [string]
+    $Tag = "UnitTests"
 )
 # Install Bicep
 curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
@@ -48,7 +52,7 @@ $configuration = [PesterConfiguration]@{
         Verbosity = 'Detailed'
     }
     Filter = @{
-        Tag = "UnitTests" 
+        Tag = $Tag
     }
     TestResult   = @{
         Enabled      = $true
