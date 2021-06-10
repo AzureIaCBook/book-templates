@@ -1,0 +1,47 @@
+trigger:
+  - main
+
+stages:
+  - stage: build
+    displayName: Publish bicep files
+    jobs:
+      - template: ./templates/publish-bicep.yml
+
+  - stage: deployus
+    dependsOn: build
+    displayName: Deploy US
+    jobs:
+      - template: ./templates/deploy-bicep.yml
+        parameters:
+          seriviceConnectionName: "WesternUsServiceConnection"
+          location: "westus"
+          locationAbbriviation: "us"
+
+  - stage: deployeur
+    dependsOn: deployus
+    displayName: Deploy Europe
+    jobs:
+      - template: ./templates/deploy-bicep.yml
+        parameters:
+          seriviceConnectionName: "WesternUsServiceConnection"
+          location: "westeurope"
+          locationAbbriviation: "eur"
+
+  - stage: deployasia
+    dependsOn: deployeur
+    displayName: Deploy Asia
+    jobs:
+      - template: ./templates/deploy-bicep.yml
+        parameters:
+          seriviceConnectionName: "WesternUsServiceConnection"
+          location: "eastasia"
+          locationAbbriviation: "asi"
+
+  - stage: deploytrafficmgr
+    dependsOn: [deployus, deployeur, deployasia]
+    displayName: Deploy traffic manager
+    jobs:
+      - template: ./templates/traffic-manager.yml
+        parameters:
+          seriviceConnectionName: "WesternUsServiceConnection"
+          location: "westus"

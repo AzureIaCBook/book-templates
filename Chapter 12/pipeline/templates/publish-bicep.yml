@@ -1,0 +1,22 @@
+parameters:
+  artifactName: "bicep-templates"
+
+jobs:
+  - job: publishbicep
+    displayName: Publish bicep files as pipeline artifacts
+    pool:
+      vmImage: "ubuntu-latest"
+
+    steps:
+      - task: CopyFiles@2
+        displayName: "Copy bicep files to: $(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}"
+        inputs:
+          SourceFolder: "deployment"
+          Contents: "**/*.bicep"
+          TargetFolder: "$(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}"
+
+      - task: PublishPipelineArtifact@1
+        displayName: "Publish Pipeline Artifact"
+        inputs:
+          targetPath: "$(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}"
+          artifact: "${{parameters.artifactName}}"
