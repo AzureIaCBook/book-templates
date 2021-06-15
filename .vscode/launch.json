@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Chapter 07/Pester/End-2-end-testing/MinimalFrontend/bin/Debug/net5.0/testweb.dll",
+            "program": "${workspaceFolder}/Chapter 07/End-2-end-testing/MinimalFrontend/bin/Debug/net5.0/testweb.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Chapter 07/Pester/End-2-end-testing/MinimalFrontend",
+            "cwd": "${workspaceFolder}/Chapter 07/End-2-end-testing/MinimalFrontend",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
