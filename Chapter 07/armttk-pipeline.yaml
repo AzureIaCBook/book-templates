@@ -2,19 +2,19 @@ trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: windows-latest
 
 steps:
 - task: RunARMTTKTests@1
   inputs:
-    templatelocation: '$(System.DefaultWorkingDirectory)/Chapter 03/'
-    resultLocation: '$(System.DefaultWorkingDirectory)/Chapter 03/Publish'
+    templatelocation: '$(System.DefaultWorkingDirectory)\Chapter 03\'
+    resultLocation: '$(System.DefaultWorkingDirectory)\Chapter 03\Publish'
 
 - task: PublishTestResults@2
   displayName: 'Publish Pester Tests'
   inputs:
     testResultsFormat: 'NUnit'
-    testResultsFiles: '**/*-armttk.xml'
+    testResultsFiles: '**\*-armttk.xml'
     pathToSources: '$(System.DefaultWorkingDirectory)\Chapter 03\Publish'
     mergeTestResults: true
     failTaskOnFailedTests: true
