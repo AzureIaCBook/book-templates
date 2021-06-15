@@ -6,12 +6,13 @@ pool:
 
 steps:
 - task: RunARMTTKTests@1
+  displayName: 'Run ARM TTK Tests'
   inputs:
     templatelocation: '$(System.DefaultWorkingDirectory)\Chapter 03\'
     resultLocation: '$(System.DefaultWorkingDirectory)\Chapter 03\Publish'
 
 - task: PublishTestResults@2
-  displayName: 'Publish Pester Tests'
+  displayName: 'Publish ARM TTK Test results'
   inputs:
     testResultsFormat: 'NUnit'
     testResultsFiles: '**\*-armttk.xml'
