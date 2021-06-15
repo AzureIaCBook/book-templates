@@ -5,21 +5,17 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: AzurePowerShell@5
-  displayName: 'Run Pester Unit tests'
+- task: RunARMTTKTests@1
   inputs:
-    azureSubscription: '<your service connection>'
-    ScriptType: 'FilePath'
-    ScriptPath: '$(System.DefaultWorkingDirectory)/Chapter 07/RunPester.ps1'
-    ScriptArguments: '-ModulePath "$(System.DefaultWorkingDirectory)/Chapter 07" -ResultsPath "$(System.DefaultWorkingDirectory)\Chapter 07\Publish"'
-    azurePowerShellVersion: 'LatestVersion'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/Chapter 07'
+    templatelocation: '$(System.DefaultWorkingDirectory)/Chapter 03/'
+    resultLocation: '$(System.DefaultWorkingDirectory)/Chapter 03/Publish'
 
 - task: PublishTestResults@2
   displayName: 'Publish Pester Tests'
   inputs:
     testResultsFormat: 'NUnit'
-    testResultsFiles: '**/Test-Pester.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)\Chapter 07\Publish'
+    testResultsFiles: '**/*-armttk.xml'
+    pathToSources: '$(System.DefaultWorkingDirectory)\Chapter 03\Publish'
     mergeTestResults: true
     failTaskOnFailedTests: true
+  condition: always()
