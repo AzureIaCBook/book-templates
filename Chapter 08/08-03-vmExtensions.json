@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachineName": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2015-06-15",
+      "name": "[format('{0}/azureAADLogin', parameters('virtualMachineName'))]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "type": "AADLoginForWindows",
+        "publisher": "Microsoft.Azure.ActiveDirectory",
+        "typeHandlerVersion": "0.4",
+        "autoUpgradeMinorVersion": true
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2015-06-15",
+      "name": "[format('{0}/AzurePolicyforWindows', parameters('virtualMachineName'))]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "type": "ConfigurationforWindows",
+        "publisher": "Microsoft.GuestConfiguration",
+        "typeHandlerVersion": "1.1",
+        "autoUpgradeMinorVersion": true
+      }
+    }
+  ],
+  "outputs": {
+    "compliantWindows2019VirtualMachineId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+    }
+  }
+}
