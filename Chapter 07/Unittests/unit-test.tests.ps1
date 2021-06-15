@@ -4,18 +4,18 @@ BeforeAll {
     $resoureGroupName = 'PesterRG'
     New-AzResourceGroup -Name $resoureGroupName -Location "West Europe" -Force | Out-Null
 
-    $storageAccountName = 'strpestertest'
+    $storageAccountName = 'unitteststr'
     $TemplateParameters = @{}
     $TemplateParameters.Add('storageAccountName', $storageAccountName)
     $TemplateParameters.Add('location', 'West Europe') 
     $TemplateParameters.Add('sku', 'Premium') 
 
-    New-AzResourceGroupDeployment -ResourceGroupName $resoureGroupName -TemplateFile "azuredeploy.json" @TemplateParameters
+    New-AzResourceGroupDeployment -ResourceGroupName $resoureGroupName -TemplateFile "$PSScriptRoot/storageaccount.bicep" @TemplateParameters
 
     $storageAccount = Get-AzStorageAccount -Name $storageAccountName -ResourceGroupName $resoureGroupName
 }
 
-Describe "Deployment Validation" {
+Describe "Deployment Validation" -Tag "UnitTests" {
     Context "StorageAccount validation" {
 
         It "Storage account should exist" {
