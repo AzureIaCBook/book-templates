@@ -20,6 +20,6 @@ Describe "Deployment Validation" {
 }
 
 AfterAll {
-    #Remove-AzResourceGroup -Name "rg-firstvnet" -Force | Out-Null
-    #Remove-AzResourceGroup -Name "rg-secondvnet" -Force | Out-Null
+    Remove-AzResourceGroup -Name "rg-firstvnet" -Force | Out-Null
+    Remove-AzResourceGroup -Name "rg-secondvnet" -Force | Out-Null
 }
