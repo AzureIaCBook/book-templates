@@ -36,4 +36,4 @@ jobs:
           inlineScript: |
             az deployment group create `
             --template-file "$(System.ArtifactsDirectory)/${{ parameters.artifactName }}/trafficmgr.bicep" `
-            --resource-group "${{parameters.systemName}}-${{parameters.environmentName}}-${{parameters.locationAbbriviation}}" `
+            --resource-group "${{parameters.systemName}}-${{parameters.environmentName}}"
