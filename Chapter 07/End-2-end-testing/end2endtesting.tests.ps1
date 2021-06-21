@@ -1,9 +1,9 @@
 # This test requires an authenticated session, use Connect-AzAccount to login
 
 BeforeAll {
-    New-AzDeployment -Location "WestEurope" -TemplateFile "mainDeployment.bicep"
-    dotnet publish MinimalFrontend/testweb.csproj --configuration Release -o ./MinimalFrontend/myapp
-    Compress-Archive -Path ./MinimalFrontend/myapp/* -DestinationPath ./MinimalFrontend/myapp.zip -Force
+    New-AzDeployment -Location "WestEurope" -TemplateFile "$PSScriptRoot/mainDeployment.bicep"
+    dotnet publish $PSScriptRoot/MinimalFrontend/testweb.csproj --configuration Release -o $PSScriptRoot/MinimalFrontend/myapp
+    Compress-Archive -Path $PSScriptRoot/MinimalFrontend/myapp/* -DestinationPath $PSScriptRoot/MinimalFrontend/myapp.zip -Force
     Publish-AzWebApp -ResourceGroupName rg-firstvnet -Name bicepfrontend -ArchivePath $PSScriptRoot/MinimalFrontend/myapp.zip -Force
 }
 

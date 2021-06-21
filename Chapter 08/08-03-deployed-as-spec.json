@@ -1,0 +1,195 @@
+{
+  "description": null,
+  "id": "/subscriptions/1dad7d18-a6d1-40c2-a56f-7dfe89999e67/resourceGroups/TemplateSpecs/providers/Microsoft.Resources/templateSpecs/compliantWindows2019Vm/versions/3.0",
+  "linkedTemplates": [
+    {
+      "path": "08-03-vmExtensions.json",
+      "template": {
+        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "outputs": {
+          "compliantWindows2019VirtualMachineId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+          }
+        },
+        "parameters": {
+          "virtualMachineName": {
+            "type": "string"
+          }
+        },
+        "resources": [
+          {
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+              "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+            ],
+            "location": "[resourceGroup().location]",
+            "name": "[format('{0}/azureAADLogin', parameters('virtualMachineName'))]",
+            "properties": {
+              "autoUpgradeMinorVersion": true,
+              "publisher": "Microsoft.Azure.ActiveDirectory",
+              "type": "AADLoginForWindows",
+              "typeHandlerVersion": "0.4"
+            },
+            "type": "Microsoft.Compute/virtualMachines/extensions"
+          },
+          {
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+              "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+            ],
+            "location": "[resourceGroup().location]",
+            "name": "[format('{0}/AzurePolicyforWindows', parameters('virtualMachineName'))]",
+            "properties": {
+              "autoUpgradeMinorVersion": true,
+              "publisher": "Microsoft.GuestConfiguration",
+              "type": "ConfigurationforWindows",
+              "typeHandlerVersion": "1.1"
+            },
+            "type": "Microsoft.Compute/virtualMachines/extensions"
+          }
+        ]
+      }
+    }
+  ],
+  "location": "westeurope",
+  "mainTemplate": {
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "functions": [],
+    "outputs": {
+      "compliantWindows2019VirtualMachineId": {
+        "type": "string",
+        "value": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+      }
+    },
+    "parameters": {
+      "subnetName": {
+        "type": "string"
+      },
+      "virtualMachineIpAddress": {
+        "type": "string"
+      },
+      "virtualMachineName": {
+        "type": "string"
+      },
+      "virtualMachinePassword": {
+        "type": "secureString"
+      },
+      "virtualMachineSize": {
+        "allowedValues": [
+          "Standard_B2s",
+          "Standard_D4ds_v4"
+        ],
+        "type": "string"
+      },
+      "virtualMachineUsername": {
+        "type": "string"
+      },
+      "virtualNetworkName": {
+        "type": "string"
+      }
+    },
+    "resources": [
+      {
+        "apiVersion": "2020-12-01",
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/networkInterfaces', parameters('virtualMachineName'))]"
+        ],
+        "identity": {
+          "type": "SystemAssigned"
+        },
+        "location": "[resourceGroup().location]",
+        "name": "[parameters('virtualMachineName')]",
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[parameters('virtualMachineSize')]"
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('virtualMachineName'))]"
+              }
+            ]
+          },
+          "osProfile": {
+            "adminPassword": "[parameters('virtualMachinePassword')]",
+            "adminUsername": "[parameters('virtualMachineUsername')]",
+            "computerName": "[parameters('virtualMachineName')]",
+            "windowsConfiguration": {
+              "timeZone": "Central Europe Standard Time"
+            }
+          },
+          "storageProfile": {
+            "imageReference": {
+              "offer": "WindowsServer",
+              "publisher": "MicrosoftWindowsServer",
+              "sku": "2019-Datacenter",
+              "version": "latest"
+            },
+            "osDisk": {
+              "caching": "ReadWrite",
+              "createOption": "FromImage",
+              "managedDisk": {
+                "storageAccountType": "StandardSSD_LRS"
+              },
+              "name": "[parameters('virtualMachineName')]",
+              "osType": "Windows"
+            }
+          }
+        },
+        "type": "Microsoft.Compute/virtualMachines"
+      },
+      {
+        "apiVersion": "2020-06-01",
+        "location": "[resourceGroup().location]",
+        "name": "[parameters('virtualMachineName')]",
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "IPConfiguration-NICE-VM1",
+              "properties": {
+                "privateIPAddress": "[parameters('virtualMachineIpAddress')]",
+                "privateIPAllocationMethod": "Static",
+                "subnet": {
+                  "id": "[resourceId('Networking.WestEurope.Spoke', 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
+                }
+              }
+            }
+          ]
+        },
+        "type": "Microsoft.Network/networkInterfaces"
+      },
+      {
+        "apiVersion": "2020-10-01",
+        "location": "[resourceGroup().location]",
+        "name": "vmExtensions",
+        "properties": {
+          "mode": "Incremental",
+          "parameters": {
+            "virtualMachineName": "[parameters('virtualMachineName')]"
+          },
+          "templateLink": {
+            "relativePath": "08-03-vmExtensions.json"
+          }
+        },
+        "type": "Microsoft.Resources/deployments"
+      }
+    ]
+  },
+  "metadata": null,
+  "name": "3.0",
+  "resourceGroup": "TemplateSpecs",
+  "systemData": {
+    "createdAt": "2021-05-30T19:41:35.377924+00:00",
+    "createdBy": "henry@azurespecialist.nl",
+    "createdByType": "User",
+    "lastModifiedAt": "2021-05-30T19:41:35.377924+00:00",
+    "lastModifiedBy": "henry@azurespecialist.nl",
+    "lastModifiedByType": "User"
+  },
+  "tags": {},
+  "type": "Microsoft.Resources/templateSpecs/versions",
+  "uiFormDefinition": null
+}

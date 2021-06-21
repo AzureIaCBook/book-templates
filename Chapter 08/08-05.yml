@@ -1,0 +1,17 @@
+steps:
+- task: CopyFiles@2
+  displayName: 'Copy template spec files to staging location'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '*.json'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: UniversalPackages@0
+  displayName: 'Publish package'
+  inputs:
+    command: 'publish'
+    publishDirectory: '$(Build.ArtifactStagingDirectory)'
+    feedsToUsePublish: 'internal'
+    vstsFeedPublish: '<your-feed-id>'
+    vstsFeedPackagePublish: 'app-service-plan-template'
+    versionOption: 'patch'
