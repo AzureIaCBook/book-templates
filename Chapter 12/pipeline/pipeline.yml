@@ -6,6 +6,7 @@ stages:
     displayName: Publish bicep files
     jobs:
       - template: ./templates/publish-bicep.yml
+        parameters:
           seriviceConnectionName: "WesternUsServiceConnection"
           location: "westus"
           locationAbbriviation: "us"
