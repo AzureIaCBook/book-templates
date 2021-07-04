@@ -5,6 +5,7 @@ parameters:
   artifactName: "bicep-templates"
   location: ""
   locationAbbriviation: ""
+  subscriptionId: ""
 
 jobs:
   - job: publishbicep
@@ -19,23 +20,14 @@ jobs:
           artifactName: "${{ parameters.artifactName }}"
           targetPath: $(System.ArtifactsDirectory)/${{ parameters.artifactName }}
 
-      - task: AzureCLI@2
-        displayName: Azure CLI - Create resource group ${{parameters.systemName}}-${{parameters.environmentName}}-${{parameters.locationAbbriviation}}
+      - task: AzureResourceManagerTemplateDeployment@3
+        displayName: Deploy Main Template
         inputs:
-          azureSubscription: ${{ parameters.seriviceConnectionName }}
-          scriptType: pscore
-          scriptLocation: inlineScript
-          inlineScript: |
-            az group create -l "${{parameters.location}}" -n "${{parameters.systemName}}-${{parameters.environmentName}}-${{parameters.locationAbbriviation}}"
-
-      - task: AzureCLI@2
-        displayName: Azure CLI - Deploy Bicep
-        inputs:
-          azureSubscription: ${{ parameters.seriviceConnectionName }}
-          scriptType: pscore
-          scriptLocation: inlineScript
-          inlineScript: |
-            az deployment group create `
-            --template-file "$(System.ArtifactsDirectory)/${{ parameters.artifactName }}/main.bicep" `
-            --resource-group "${{parameters.systemName}}-${{parameters.environmentName}}-${{parameters.locationAbbriviation}}" `
-            --parameters locationAbbriviation=${{parameters.locationAbbriviation}}
+          azureResourceManagerConnection: '${{ parameters.seriviceConnectionName }}'
+          deploymentScope: 'Subscription'
+          subscriptionId: '${{ parameters.subscriptionId }}'
+          location: ${{ parameters.location }}
+          templateLocation: 'Linked artifact'
+          csmFile: '$(System.ArtifactsDirectory)/${{ parameters.artifactName }}/main.json'
+          overrideParameters: -locationAbbriviation ${{parameters.locationAbbriviation}}
+          deploymentMode: 'Incremental'

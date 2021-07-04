@@ -1,3 +1,5 @@
+targetScope = 'subscription'
+
 param systemName string = 'demodeploy'
 
 @allowed([
@@ -15,8 +17,14 @@ param environmentName string = 'prod'
 ])
 param locationAbbriviation string = 'us'
 
+resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+  name: '${systemName}-${environmentName}-${locationAbbriviation}'
+  location: location
+}
+
 module appServicePlanModule 'Web/serverfarms.bicep' = {
   name: 'appServicePlan'
+  scope: resourceGroup
   params: {
     systemName: systemName
     environmentName: environmentName
@@ -29,6 +37,7 @@ module webApplicationModule 'Web/sites.bicep' = {
     appServicePlanModule
   ]
   name: 'webApplication'
+  scope: resourceGroup
   params: {
     systemName: systemName
     environmentName: environmentName

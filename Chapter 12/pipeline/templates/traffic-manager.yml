@@ -4,6 +4,7 @@ parameters:
   environmentName: "prod"
   artifactName: "bicep-templates"
   location: ""
+  subscriptionId: ""
 
 jobs:
   - job: trafficmanager
@@ -18,22 +19,13 @@ jobs:
           artifactName: "${{ parameters.artifactName }}"
           targetPath: $(System.ArtifactsDirectory)/${{ parameters.artifactName }}
 
-      - task: AzureCLI@2
-        displayName: Azure CLI - Create resource group ${{parameters.systemName}}-${{parameters.environmentName}}
+      - task: AzureResourceManagerTemplateDeployment@3
+        displayName: Deploy Main Template
         inputs:
-          azureSubscription: ${{ parameters.seriviceConnectionName }}
-          scriptType: pscore
-          scriptLocation: inlineScript
-          inlineScript: |
-            az group create -l "${{parameters.location}}" -n "${{parameters.systemName}}-${{parameters.environmentName}}"
-
-      - task: AzureCLI@2
-        displayName: Azure CLI - Deploy Bicep
-        inputs:
-          azureSubscription: ${{ parameters.seriviceConnectionName }}
-          scriptType: pscore
-          scriptLocation: inlineScript
-          inlineScript: |
-            az deployment group create `
-            --template-file "$(System.ArtifactsDirectory)/${{ parameters.artifactName }}/trafficmgr.bicep" `
-            --resource-group "${{parameters.systemName}}-${{parameters.environmentName}}"
+          azureResourceManagerConnection: '${{ parameters.seriviceConnectionName }}'
+          deploymentScope: 'Subscription'
+          subscriptionId: '${{ parameters.subscriptionId }}'
+          location: ${{ parameters.location }}
+          templateLocation: 'Linked artifact'
+          csmFile: '$(System.ArtifactsDirectory)/${{ parameters.artifactName }}/trafficmgr.json'
+          deploymentMode: 'Incremental'

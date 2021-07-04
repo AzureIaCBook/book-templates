@@ -1,6 +1,10 @@
 trigger:
   - main
 
+variables:
+  testSubscriptionId: ''
+  prodSubscriptionId: ''
+
 stages:
   - stage: build
     displayName: Publish bicep files
@@ -10,6 +14,7 @@ stages:
           seriviceConnectionName: "WesternUsServiceConnection"
           location: "westus"
           locationAbbriviation: "us"
+          subscriptionId: testSubscriptionId
 
   - stage: deployus
     dependsOn: build
@@ -20,6 +25,7 @@ stages:
           seriviceConnectionName: "WesternUsServiceConnection"
           location: "westus"
           locationAbbriviation: "us"
+          subscriptionId: testSubscriptionId
 
   - stage: deployeur
     dependsOn: deployus
@@ -30,6 +36,7 @@ stages:
           seriviceConnectionName: "WesternUsServiceConnection"
           location: "westeurope"
           locationAbbriviation: "eur"
+          subscriptionId: testSubscriptionId
 
   - stage: deployasia
     dependsOn: deployeur
@@ -40,6 +47,7 @@ stages:
           seriviceConnectionName: "WesternUsServiceConnection"
           location: "eastasia"
           locationAbbriviation: "asi"
+          subscriptionId: testSubscriptionId
 
   - stage: deploytrafficmgr
     dependsOn: [deployus, deployeur, deployasia]
@@ -49,3 +57,4 @@ stages:
         parameters:
           seriviceConnectionName: "WesternUsServiceConnection"
           location: "westeurope"
+          subscriptionId: testSubscriptionId

@@ -5,6 +5,7 @@ parameters:
   artifactName: "bicep-templates"
   location: ""
   locationAbbriviation: ""
+  subscriptionId: ""
 
 jobs:
   - job: publishbicep
@@ -13,33 +14,33 @@ jobs:
       vmImage: "ubuntu-latest"
 
     steps:
+      - task: PowerShell@2
+        displayName: Bicep Build
+        inputs:
+          targetType: 'inline'
+          script: |
+            az bicep build --file 'deployment/main.bicep'
+            az bicep build --file 'deployment/trafficmgr.bicep'
+          pwsh: true
+
+      - task: AzureResourceManagerTemplateDeployment@3
+        displayName: Validate ARM Template
+        inputs:
+          azureResourceManagerConnection: ${{ parameters.seriviceConnectionName }}
+          deploymentScope: 'Subscription'
+          subscriptionId: '${{ parameters.subscriptionId }}'
+          location: 'West Europe'
+          templateLocation: 'Linked artifact'
+          csmFile: 'deployment/main.json'
+          overrideParameters: -locationAbbriviation ${{parameters.locationAbbriviation}}
+          deploymentMode: 'Validation'
+
       - task: CopyFiles@2
-        displayName: "Copy bicep files to: $(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}"
+        displayName: 'Copy templates to $(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}'
         inputs:
           SourceFolder: "deployment"
-          Contents: "**/*.bicep"
+          Contents: '*.json'
           TargetFolder: "$(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}"
-
-      - task: AzureCLI@2
-        displayName: Azure CLI - Create resource group ${{parameters.systemName}}-${{parameters.environmentName}}-${{parameters.locationAbbriviation}}
-        inputs:
-          azureSubscription: ${{ parameters.seriviceConnectionName }}
-          scriptType: pscore
-          scriptLocation: inlineScript
-          inlineScript: |
-            az group create -l "${{parameters.location}}" -n "${{parameters.systemName}}-${{parameters.environmentName}}-${{parameters.locationAbbriviation}}"
-
-      - task: AzureCLI@2
-        displayName: Azure CLI - Validate bicep template
-        inputs:
-          azureSubscription: ${{ parameters.seriviceConnectionName }}
-          scriptType: pscore
-          scriptLocation: inlineScript
-          inlineScript: |
-            az deployment group validate `
-            --template-file "$(System.ArtifactsDirectory)/${{ parameters.artifactName }}/main.bicep" `
-            --resource-group "${{parameters.systemName}}-${{parameters.environmentName}}-${{parameters.locationAbbriviation}}" `
-            --parameters locationAbbriviation=${{parameters.locationAbbriviation}}
 
       - task: PublishPipelineArtifact@1
         displayName: "Publish Pipeline Artifact"
