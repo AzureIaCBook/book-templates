@@ -5,10 +5,11 @@ BeforeAll {
     New-AzResourceGroup -Name $resoureGroupName -Location "West Europe" -Force | Out-Null
 
     $storageAccountName = 'unitteststr'
-    $TemplateParameters = @{}
-    $TemplateParameters.Add('storageAccountName', $storageAccountName)
-    $TemplateParameters.Add('location', 'West Europe') 
-    $TemplateParameters.Add('sku', 'Premium') 
+    $TemplateParameters = @{
+        storageAccountName = $storageAccountName
+        location = 'West Europe'
+        sku = 'Premium'
+    }
 
     New-AzResourceGroupDeployment -ResourceGroupName $resoureGroupName -TemplateFile "$PSScriptRoot/storageaccount.bicep" @TemplateParameters
 
