@@ -8,13 +8,13 @@ param vnet1Name string = 'vnet-first'
 param vnet2Name string = 'vnet-second'
 
 resource rg1 'Microsoft.Resources/resourceGroups@2020-06-01' = {
-  name: '${rg1Name}'
-  location: '${rg1Location}'
+  name: rg1Name
+  location: rg1Location
 }
 
 resource rg2 'Microsoft.Resources/resourceGroups@2020-06-01' = {
-  name: '${rg2Name}'
-  location: '${rg2Location}'
+  name: rg2Name
+  location: rg2Location
 }
 
 module vnet1 'vnet.bicep' = {
@@ -30,7 +30,7 @@ module vnet1 'vnet.bicep' = {
   }
 }
 
-module vne2 'vnet.bicep' = {
+module vnet2 'vnet.bicep' = {
   name: 'vnet2'
   scope: resourceGroup(rg2.name)
   params: {
@@ -48,7 +48,7 @@ module peering1 'vnet-peering.bicep' = {
   scope: resourceGroup(rg1.name)
   dependsOn: [
     vnet1
-    vne2
+    vnet2
   ]
   params: {
     localVnetName: vnet1Name
@@ -61,7 +61,7 @@ module peering2 'vnet-peering.bicep' = {
   name: 'peering2'
   scope: resourceGroup(rg2.name)
   dependsOn: [
-    vne2
+    vnet2
     vnet1
   ]
   params: {
