@@ -23,7 +23,7 @@ Describe "Deployment Validation" -Tag "UnitTests" {
             $storageAccount | Should -not -be $null
         }
 
-        It "Storage account should be of type 'StorageV2'" {
+        It "Storage account should have tier 'Premium'" {
             $storageAccount.Sku.Tier | Should -Be "Premium"
         }
     }
