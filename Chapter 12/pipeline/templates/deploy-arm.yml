@@ -1,9 +1,9 @@
 parameters:
   seriviceConnectionName: ""
-  systemName: "tomatoe"
   environmentName: "test"
   artifactName: "arm-templates"
   location: ""
+  locationAbbriviation: ""
 
 steps:
   - task: DownloadPipelineArtifact@0
@@ -20,6 +20,7 @@ steps:
       subscriptionId: "${{ parameters.subscriptionId }}"
       location: ${{ parameters.location }}
       templateLocation: "Linked artifact"
-      csmFile: "$(System.ArtifactsDirectory)/${{ parameters.artifactName }}/trafficmgr.json"
-      overrideParameters: -environmentName ${{parameters.environmentName}}
+      csmFile: "$(System.ArtifactsDirectory)/${{ parameters.artifactName }}/main.json"
+      csmParametersFile: "$(System.ArtifactsDirectory)/${{ parameters.artifactName }}/${{parameters.environmentName}}.parameters.json"
+      overrideParameters: -locationAbbriviation ${{parameters.locationAbbriviation}}
       deploymentMode: "Incremental"

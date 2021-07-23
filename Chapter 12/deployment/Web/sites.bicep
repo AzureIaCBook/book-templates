@@ -1,17 +1,9 @@
 param systemName string
-
+param environmentName string
 @allowed([
-  'dev'
-  'test'
-  'acc'
-  'prod'
-])
-param environmentName string = 'prod'
-
-@allowed([
-  'eur' // West europe
+  'we' // West europe
   'us' // East US (1)
-  'asi' // Easy Japan
+  'asi' // East Japan
 ])
 param locationAbbriviation string
 

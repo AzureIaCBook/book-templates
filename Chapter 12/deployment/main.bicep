@@ -1,30 +1,22 @@
 targetScope = 'subscription'
 
-param systemName string = 'demodeploy'
-
+param systemName string
+param environmentName string
 @allowed([
-  'dev'
-  'test'
-  'acc'
-  'prod'
-])
-param environmentName string = 'prod'
-
-@allowed([
-  'eur' // West europe
+  'we' // West europe
   'us' // East US (1)
-  'asi' // Easy Japan
+  'asi' // East Japan
 ])
-param locationAbbriviation string = 'us'
+param locationAbbriviation string
 
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+resource targetResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+  location: deployment().location
   name: '${systemName}-${environmentName}-${locationAbbriviation}'
-  location: location
 }
 
 module appServicePlanModule 'Web/serverfarms.bicep' = {
   name: 'appServicePlan'
-  scope: resourceGroup
+  scope: targetResourceGroup
   params: {
     systemName: systemName
     environmentName: environmentName
@@ -37,7 +29,7 @@ module webApplicationModule 'Web/sites.bicep' = {
     appServicePlanModule
   ]
   name: 'webApplication'
-  scope: resourceGroup
+  scope: targetResourceGroup
   params: {
     systemName: systemName
     environmentName: environmentName

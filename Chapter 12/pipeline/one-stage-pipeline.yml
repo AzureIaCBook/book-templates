@@ -1,0 +1,20 @@
+trigger:
+  - main
+
+jobs:
+  - job: publishbicep
+    displayName: Publish bicep files as pipeline artifacts
+    steps:
+      - bash: az bicep build --file ./deployment/main.bicep
+        displayName: "Transpile Bicep"
+
+      - task: AzureResourceManagerTemplateDeployment@3
+        displayName: Deploy Main Template
+        inputs:
+          azureResourceManagerConnection: "TestEnvironment"
+          deploymentScope: "Subscription"
+          location: "westeurope"
+          templateLocation: "Linked artifact"
+          csmFile: "./deployment/main.json"
+          csmParametersFile: "./deployment/test.parameters.json"
+          deploymentMode: "Incremental"
