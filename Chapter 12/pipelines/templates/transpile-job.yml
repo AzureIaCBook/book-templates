@@ -1,0 +1,24 @@
+parameters:
+  - name: artifactName
+    type: string
+    default: "arm-templates"
+
+steps:
+  - bash: az bicep build --file ./deployment/main.bicep
+    displayName: "Transpile Main Bicep"
+
+  - bash: az bicep build --file ./deployment/trafficmgr.bicep
+    displayName: "Transpile Traffic Manager Bicep"
+
+  - task: CopyFiles@2
+    displayName: "Copy JSON files to: $(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}"
+    inputs:
+      SourceFolder: "deployment"
+      Contents: "**/.json"
+      TargetFolder: "$(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}"
+
+  - task: PublishPipelineArtifact@1
+    displayName: "Publish Pipeline Artifact"
+    inputs:
+      targetPath: "$(Build.ArtifactStagingDirectory)/${{parameters.artifactName}}"
+      artifact: "${{parameters.artifactName}}"

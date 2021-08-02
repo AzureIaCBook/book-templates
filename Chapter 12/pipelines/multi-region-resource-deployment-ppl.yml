@@ -1,0 +1,126 @@
+trigger:
+  - main
+
+variables:
+  TestSubscriptionId: "<your-subscription-id>"
+  TestServiceConnectionName: "TestEnvironment"
+
+  ProdSubscriptionId: "<your-subscription-id>"
+  ProdServiceConnectionName: "ProductionEnvironment"
+
+stages:
+  - stage: build
+    displayName: Publish Bicep Files
+    jobs:
+      - job: publishbicep
+        displayName: Publish bicep files as pipeline artifacts
+        steps:
+          - template: ./templates/transpile-job.yml
+
+  - stage: deployinfratest
+    dependsOn: build
+    displayName: Deploy to test
+
+    variables:
+      environmentName: "test"
+
+    jobs:
+      - job: deploy_us_test
+        displayName: Deploy infra to US region test
+        steps:
+          - template: ./templates/deploy-arm.yml
+            parameters:
+              seriviceConnectionName: ${{ variables.TestServiceConnectionName }}
+              subscriptionId: ${{ variables.TestSubscriptionId }}
+              location: "westus"
+              locationAbbriviation: "us"
+              environmentName: ${{ variables.environmentName }}
+
+      - job: deploy_eur_test
+        displayName: Deploy infra to EUR region test
+        dependsOn: deploy_us_test
+        steps:
+          - template: ./templates/deploy-arm.yml
+            parameters:
+              seriviceConnectionName: ${{ variables.TestServiceConnectionName }}
+              subscriptionId: ${{ variables.TestSubscriptionId }}
+              location: "westeurope"
+              locationAbbriviation: "we"
+              environmentName: ${{ variables.environmentName }}
+
+      - job: deploy_asia_test
+        displayName: Deploy infra to ASIA region test
+        dependsOn: deploy_eur_test
+        steps:
+          - template: ./templates/deploy-arm.yml
+            parameters:
+              seriviceConnectionName: ${{ variables.TestServiceConnectionName }}
+              subscriptionId: ${{ variables.TestSubscriptionId }}
+              location: "eastasia"
+              locationAbbriviation: "asi"
+              environmentName: ${{ variables.environmentName }}
+
+      - job: deploy_trafficmgr_test
+        displayName: Deploy traffic manager test
+        dependsOn: deploy_asia_test
+        steps:
+          - template: ./templates/traffic-manager.yml
+            parameters:
+              seriviceConnectionName: ${{ variables.TestServiceConnectionName }}
+              subscriptionId: ${{ variables.TestSubscriptionId }}
+              location: "westeurope"
+              environmentName: ${{ variables.environmentName }}
+
+  - stage: deployinfraprod
+    dependsOn: deployinfratest
+    displayName: Deploy to production
+
+    variables:
+      environmentName: "prod"
+
+    jobs:
+      - job: deploy_us_prod
+        displayName: Deploy infra to US region prod
+        steps:
+          - template: ./templates/deploy-arm.yml
+            parameters:
+              seriviceConnectionName: ${{ variables.ProdServiceConnectionName }}
+              subscriptionId: ${{ variables.ProdSubscriptionId }}
+              location: "westus"
+              locationAbbriviation: "us"
+              environmentName: ${{ variables.environmentName }}
+
+      - job: deploy_eur_prod
+        displayName: Deploy infra to EUR region prod
+        dependsOn: deploy_us_prod
+        steps:
+          - template: ./templates/deploy-arm.yml
+            parameters:
+              seriviceConnectionName: ${{ variables.ProdServiceConnectionName }}
+              subscriptionId: ${{ variables.ProdSubscriptionId }}
+              location: "westeurope"
+              locationAbbriviation: "we"
+              environmentName: ${{ variables.environmentName }}
+
+      - job: deploy_asia_prod
+        displayName: Deploy infra to ASIA region prod
+        dependsOn: deploy_eur_prod
+        steps:
+          - template: ./templates/deploy-arm.yml
+            parameters:
+              seriviceConnectionName: ${{ variables.ProdServiceConnectionName }}
+              subscriptionId: ${{ variables.ProdSubscriptionId }}
+              location: "eastasia"
+              locationAbbriviation: "asi"
+              environmentName: ${{ variables.environmentName }}
+
+      - job: deploy_trafficmgr_prod
+        displayName: Deploy traffic manager test
+        dependsOn: deploy_asia_prod
+        steps:
+          - template: ./templates/traffic-manager.yml
+            parameters:
+              seriviceConnectionName: ${{ variables.ProdServiceConnectionName }}
+              subscriptionId: ${{ variables.ProdSubscriptionId }}
+              location: "westeurope"
+              environmentName: ${{ variables.environmentName }}

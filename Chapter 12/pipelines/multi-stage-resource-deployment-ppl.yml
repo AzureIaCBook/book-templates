@@ -1,0 +1,26 @@
+trigger:
+  - main
+
+stages:
+  - stage: build
+    displayName: Publish Bicep Files
+    jobs:
+      - job: publishbicep
+        displayName: Publish bicep files as pipeline artifacts
+        steps:
+          - template: ./templates/transpile-job.yml
+
+  - stage: deployinfratest
+    dependsOn: build
+    displayName: Deploy to test
+    jobs:
+      - job: deploy_us_test
+        displayName: Deploy infra to US region test
+        steps:
+          - template: ./templates/deploy-arm.yml
+            parameters:
+              seriviceConnectionName: "TestEnvironment"
+              subscriptionId: "<your-subscription-id>"
+              environmentName: "test"
+              location: "westus"
+              locationAbbriviation: "us"
