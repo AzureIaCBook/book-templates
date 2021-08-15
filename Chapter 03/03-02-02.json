@@ -1,0 +1,29 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "StorageAccount": {
+            "type": "object",
+            "defaultValue": {
+                "name": "datastorage",
+                "sku": {
+                    "name": "Standard_GRS",
+                    "tier": "Premium"
+                }
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('storageAccount').name]",
+            "sku": {
+                "name": "[parameters('storageAccount').sku.name]",
+                "tier": "[parameters('storageAccount').sku.tier]"
+            },
+            "kind": "StorageV2",
+            "apiVersion": "2019-04-01",
+            "location": "West Europe"
+        }
+    ]
+}

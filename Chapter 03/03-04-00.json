@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "resources": [
+        {
+            "type": "Microsoft.Sql/servers",
+            "kind": "v12.0",
+            "name": "bookexampledatabase",
+            "apiVersion": "2015-05-01-preview",
+            "location": "West Europe",
+            "properties": {
+                "administratorLogin": "bookexampledatabase",
+                "administratorLoginPassword": "1234@demo22",
+                "version": "12.0"
+            }
+        }
+    ],
+    "outputs": {
+        "sqlServerFQDN": {
+            "type": "string",
+            "value": "[reference('bookexampledatabase').fullyQualifiedDomainName]"
+        }
+    }
+}

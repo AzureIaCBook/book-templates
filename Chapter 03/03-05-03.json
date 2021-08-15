@@ -1,0 +1,46 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlServerName": {
+            "type": "string"
+        },
+        "sqlServerUsername": {
+            "type": "string"
+        },
+        "sqlServerPassword": {
+            "type": "securestring"
+        }
+    },
+    "functions": [
+        {
+            "namespace": "demofunction",
+            "members": {
+                "capitalize": {
+                    "parameters": [
+                        {
+                            "name": "input",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[concat(toUpper(first(parameters('input'))), toLower(skip(parameters('input'), 1)))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "type": "Microsoft.Sql/servers",
+            "name": "[demofunction.capitalize(parameters('sqlServerName'))]",
+            "apiVersion": "2019-06-01-preview",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "administratorLogin": "[parameters('sqlServerUsername')]",
+                "administratorLoginPassword": "[parameters('sqlServerPassword')]"
+            }
+        }
+    ]
+}

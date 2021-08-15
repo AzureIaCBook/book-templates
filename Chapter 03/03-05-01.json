@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subnet": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "routeTable": {
+            "id": "[resourceId('Microsoft.Network/routeTables', parameters('subnet').routeTable.name)]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "location": "West Europe",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('subnet').name]",
+            "properties": {
+                "addressPrefix": "[parameters('subnet').addressPrefix]",
+                "routeTable": "[if(contains(parameters('subnet'), 'routeTable'), variables('routeTable'), json('null'))]"
+            }
+        }
+    ]
+}

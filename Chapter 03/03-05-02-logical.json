@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment": {
+            "type": "string"
+        },
+        "availabilitySet": {
+            "type": "bool"
+        },
+        "availabilitySetName": {
+            "type": "string"
+        },
+        "vmName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "deployAvailabilitySet": "[and(parameters('availabilitySet'), equals(parameters('environment'), 'production'))]",
+        "availabilitySet": {
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('vmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2017-03-30",
+            "properties": {
+                "availabilitySet": "[if(variables('deployAvailabilitySet'), variables('availabilitySet'), json('null'))]"
+            }
+        }
+    ]
+}
