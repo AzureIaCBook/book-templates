@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "env": {
+            "value": "testhb"
+        },
+        "appServicePlanSku": {
+            "value": {
+                "capacity": 1,
+                "name": "B1"
+            }
+        },
+        "sqlSettings": {
+            "value": {
+                "sqlServerUsername": "bookdemo",
+                "sqlServerPassword": "__sqlServerPassword__",
+                "database": {
+                    "sku": {
+                        "name": "Basic",
+                        "tier": "Basic",
+                        "capacity": 5
+                    },
+                    "maxSizeBytes": 2147483648
+                }
+            }
+        },
+        "storageAccountSettings": {
+            "value": [
+                {
+                    "name": "data",
+                    "sku": {
+                        "name": "Standard_LRS",
+                        "tier": "Standard"
+                    }
+                },
+                {
+                    "name": "logging",
+                    "sku": {
+                        "name": "Standard_LRS",
+                        "tier": "Standard"
+                    }
+                }
+            ]
+        },
+        "templateSettings": {
+            "value": {
+                "location": "westeurope",
+                "storageAccountUrl": "nolongerusedinbicep",
+                "storageContainer": "storageContainer"
+            }
+        }
+    }
+}
