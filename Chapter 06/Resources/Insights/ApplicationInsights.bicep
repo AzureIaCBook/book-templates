@@ -11,7 +11,7 @@ resource applicationInsightsResource 'Microsoft.Insights/components@2020-02-02-p
   location: location
   properties: {
     applicationId: applicationInsightsName
-    WorkspaceResourceId: resourceId('Microsoft.OperationalInsights/workspaces', omsWorkspaceResource.name)
+    WorkspaceResourceId: omsWorkspaceResource.id
   }
 }
 
