@@ -2,7 +2,7 @@ targetScope = 'subscription'
 
 param managementGroupName string
 
-module allowedLocationsPolicyDefinition '11-01.bicep' = {
+module allowedLocationsPolicyDefinition '12-01.bicep' = {
   name: 'allowedLocationsPolicyDefinition'
 }
 
