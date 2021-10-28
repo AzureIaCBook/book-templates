@@ -23,17 +23,14 @@ resource auditNSGwithoutLogAnalyticsEnabled 'Microsoft.Authorization/policyDefin
           'existenceCondition': {
             'allof': [
               {
-                'anyof': [
-                  {
-                    'field': 'Microsoft.Insights/diagnosticSettings/metrics.enabled'
-                    'equals': 'True'
-                  }
-                  {
-                    'field': 'Microsoft.Insights/diagnosticSettings/logs.enabled'
-                    'equals': 'True'
-                  }
-                ]
+                'field': 'Microsoft.Insights/diagnosticSettings/metrics.enabled'
+                'equals': 'True'
               }
+              {
+                'field': 'Microsoft.Insights/diagnosticSettings/logs.enabled'
+                'equals': 'True'
+              }
+
               {
                 'field': 'Microsoft.Insights/diagnosticSettings/workspaceId'
                 'exists': 'True'

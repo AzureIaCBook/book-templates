@@ -12,7 +12,7 @@ resource initiative 'Microsoft.Authorization/policySetDefinitions@2020-09-01' = 
     description: 'Definition set for management group \'${managementGroupName}\''
     policyDefinitions: [
       {
-        policyDefinitionId: '/providers/Microsoft.Management/managementGroups/${managementGroupName}/providers/${allowedLocationsPolicyDefinition.outputs.policyDefinitionId}'
+        policyDefinitionId: allowedLocationsPolicyDefinition.outputs.policyDefinitionId
       }
     ]
   }
