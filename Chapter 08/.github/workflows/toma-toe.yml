@@ -1,0 +1,39 @@
+name: Toma Toe Workflow
+on: [push]
+
+jobs:
+  publish-bicep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile infrastructure
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: 2.23.0
+          inlineScript: az bicep build --file ./deployment/main.bicep
+      - name: Compile infrastructure
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: 2.23.0
+          inlineScript: az bicep build --file ./deployment/trafficmgr.bicep
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bicep-templates
+          path: deployment/*.json
+
+  infrastructure-incremental-test:
+    needs: publish-bicep
+    uses: nikneem/github-actions-start/.github/workflows/deployment.yml@0167d08e1a3a89b9890d081d23408e71a83b23c4
+    with:
+      environment: test
+    secrets:
+      azure-login: ${{ secrets.AZURE_TEST }}
+
+  infrastructure-incremental-prod:
+    needs: infrastructure-incremental-test
+    uses: nikneem/github-actions-start/.github/workflows/deployment.yml@0167d08e1a3a89b9890d081d23408e71a83b23c4
+    with:
+      environment: prod
+    secrets:
+      azure-login: ${{ secrets.AZURE_PROD }}
