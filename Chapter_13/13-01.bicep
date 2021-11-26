@@ -47,3 +47,19 @@ resource UnmanagedMG 'Microsoft.Management/managementGroups@2020-05-01' = {
     }
   }
 }
+
+module ManagedMGPolicyAssignments '13-03-01.bicep' = {
+  name: 'ManagedMGPolicyAssignmentsDeployment'
+  scope: ManagedMG
+  params: {
+    managementGroupName: ManagedMG.name
+  }
+}
+
+module ManagementSubscription '13-03-02.bicep' = {
+  name: 'ManagementSubscriptionDeployment'
+  scope: tenant()
+  params: {
+    managementGroupId: FoundationMG.id
+  }
+}
