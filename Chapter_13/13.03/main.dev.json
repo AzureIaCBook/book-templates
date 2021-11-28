@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "systemName": {
+      "value": "systemname"
+    },
+    "locationAbbreviation": {
+      "value": "weu"
+    },
+    "environmentCode": {
+      "value": "dev"
+    },
+    "deployTimeKeyVaultResourceGroup": {
+      "value": "deploy-time"
+    },
+    "deployTimeKeyVaultName": {
+      "value": "deploy-time-kv"
+    },
+    "internalDomainName": {
+      "value": "your-internal-domain.int"
+    },
+    "externalDomainName": {
+      "value": "your-external-domain.nl"
+    },
+    "appGatewayExternalCertificateName": {
+      "value": "your-external-domain-certificate-name"
+    },
+    "appGatewayInternalCertificateName": {
+      "value": "your-internal-domain-certificate"
+    }
+  }
+}
