@@ -20,35 +20,40 @@ param deployTimeKeyVaultResourceGroup string
 param appGatewayExternalCertificateName string
 param appGatewayInternalCertificateName string
 
+// Not the address space cannot be changed once a VNet was created
+// You may need to change the address space to fit your needs
 var vnetAddressPrefixes = [
-  '10.0.0.0/8'
+  '10.0.0.0/16'
 ]
 
+// Same for subnets, /24 means 251 available addresses, you
+// may want to change the address space for your subnets
+// depending on your needs.
 var subnets = [
   {
     name: 'gateway'
-    prefix: '10.5.0.0/16'
+    prefix: '10.0.0.0/24'
     privateEndpointNetworkPolicies: 'Enabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
     delegations: []
   }
   {
     name: 'apim'
-    prefix: '10.0.0.0/16'
+    prefix: '10.0.1.0/24'
     privateEndpointNetworkPolicies: 'Enabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
     delegations: []
   }
   {
     name: 'integration'
-    prefix: '10.8.0.0/16'
+    prefix: '10.0.2.0/24'
     privateEndpointNetworkPolicies: 'Disabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
     delegations: []
   }
   {
     name: 'services'
-    prefix: '10.1.0.0/16'
+    prefix: '10.0.3.0/24'
     privateEndpointNetworkPolicies: 'Enabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
     delegations: []
