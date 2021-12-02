@@ -37,8 +37,8 @@ resource apim 'Microsoft.ApiManagement/service@2021-04-01-preview' = {
     capacity: 1
   }
   properties: {
-    publisherName: 'SnelStart B.V.'
-    publisherEmail: 'admin@snelstart.nl'
+    publisherName: 'YourCompany B.V.'
+    publisherEmail: 'admin@yourcomp.nl'
     virtualNetworkType: 'Internal'
     virtualNetworkConfiguration: {
       subnetResourceId: '${vnetResourceId}/subnets/${subnetName}'
