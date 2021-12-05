@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "resources": [
+        {
+            "name": "messagingStack",
+            "type": "Microsoft.Resources/deploymentStacks",
+            "apiVersion": "2021-05-01-preview",
+            "properties": {
+                "updateBehavior": "purgeResources",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "name": "messaging-example-stack",
+                            "type": "Microsoft.ServiceBus/namespaces",
+                            "apiVersion": "2021-01-01-preview",
+                            "location": "[resourceGroup().location]",
+                            "sku": {
+                                "name": "Standard"
+                            },
+                            "resources": [
+                                {
+                                    "name": "evenBetterExampleQueue",
+                                    "type": "queues",
+                                    "apiVersion": "2021-01-01-preview",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.ServiceBus/namespaces', 'messaging-example-stack')]"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
