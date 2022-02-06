@@ -7,7 +7,7 @@ BeforeAll {
 }
 
 Describe "Deployment Validation" {
-    Context "Integration test" {
+    Context "VNet peering validation" {
 
         It "Vnet peering should exist" {
             $vnetPeering | Should -not -be $null

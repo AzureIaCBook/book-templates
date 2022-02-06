@@ -1,8 +1,8 @@
 # This test requires an authenticated session, use Connect-AzAccount to login
 
 BeforeAll {
-    $resoureGroupName = 'PesterRG'
-    New-AzResourceGroup -Name $resoureGroupName -Location "West Europe" -Force | Out-Null
+    $resourceGroupName = 'PesterRG'
+    New-AzResourceGroup -Name $resourceGroupName -Location "West Europe" -Force | Out-Null
 
     $storageAccountName = 'unitteststr'
     $TemplateParameters = @{
@@ -11,9 +11,9 @@ BeforeAll {
         sku = 'Premium'
     }
 
-    New-AzResourceGroupDeployment -ResourceGroupName $resoureGroupName -TemplateFile "$PSScriptRoot/storageaccount.bicep" @TemplateParameters
+    New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile "$PSScriptRoot/storageaccount.bicep" @TemplateParameters
 
-    $storageAccount = Get-AzStorageAccount -Name $storageAccountName -ResourceGroupName $resoureGroupName
+    $storageAccount = Get-AzStorageAccount -Name $storageAccountName -ResourceGroupName $resourceGroupName
 }
 
 Describe "Deployment Validation" -Tag "UnitTests" {
@@ -24,7 +24,7 @@ Describe "Deployment Validation" -Tag "UnitTests" {
         }
 
         It "Storage account should have tier 'Premium'" {
-            $storageAccount.Sku.Tier | Should -Be "Premium"
+            $storageAccount.Sku.Name | Should -Be "Premium_LRS"
         }
     }
 }

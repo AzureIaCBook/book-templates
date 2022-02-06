@@ -39,10 +39,10 @@ stages:
           inlineScript: 'az storage blob upload-batch --account-name ${{ variables.storageAccountName }} -d ${{ variables.containerName }} -s $(build.artifactstagingdirectory)/templates --connection-string "${{ variables.storageAccountConnectionString }}"'
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifact: drop'
-- stage: 'DelployTemplates'
+- stage: 'DeployTemplates'
   displayName: 'Deploy Templates'
   jobs: 
-    - job: 'DelployTemplates'
+    - job: 'DeployTemplates'
       steps:
 
       - task: DownloadBuildArtifacts@0
