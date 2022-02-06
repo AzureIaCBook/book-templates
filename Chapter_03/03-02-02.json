@@ -2,28 +2,31 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "StorageAccount": {
+        "SQLDatabase": {
             "type": "object",
             "defaultValue": {
-                "name": "datastorage",
+                "name": "SQLDatabase",
                 "sku": {
-                    "name": "Standard_GRS",
-                    "tier": "Premium"
+                    "name": "Basic",
+                    "capacity": 5
                 }
             }
         }
     },
     "resources": [
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[parameters('storageAccount').name]",
+            "type": "Microsoft.Sql/servers/databases",
+            "apiVersion": "2017-10-01-preview",
+            "name": "[concat('MyFirstSQLServer/', parameters('SQLDatabase').name)]",
+            "location": "West Europe",
             "sku": {
-                "name": "[parameters('storageAccount').sku.name]",
-                "tier": "[parameters('storageAccount').sku.tier]"
+                "name": "[parameters('SQLDatabase').sku.name]",
+                "capacity": "[parameters('SQLDatabase').sku.capacity]"
             },
-            "kind": "StorageV2",
-            "apiVersion": "2019-04-01",
-            "location": "West Europe"
+            "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "maxSizeBytes": 2147483648
+            }
         }
     ]
 }

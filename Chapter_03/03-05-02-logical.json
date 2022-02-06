@@ -17,7 +17,7 @@
     },
     "variables": {
         "deployAvailabilitySet": "[and(parameters('availabilitySet'), equals(parameters('environment'), 'production'))]",
-        "availabilitySet": {
+        "availabilitySetIdentifier": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
         }
     },
@@ -28,7 +28,7 @@
             "location": "[resourceGroup().location]",
             "apiVersion": "2017-03-30",
             "properties": {
-                "availabilitySet": "[if(variables('deployAvailabilitySet'), variables('availabilitySet'), json('null'))]"
+                "availabilitySet": "[if(variables('deployAvailabilitySet'), variables('availabilitySetIdentifier'), json('null'))]"
             }
         }
     ]

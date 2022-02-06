@@ -1,0 +1,61 @@
+// This tempaltes assumes you have alreade deployed the mentioned Key Vault
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName": {
+            "type": "string"
+        },
+        "serverFarmName": {
+            "type": "string"
+        },
+        "appServiceName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "keyVaultSecretReaderRoleId": "4633458b-17de-408a-b874-0445c86b69e6" // RBAC Role: Key Vault Secrets User
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[parameters('serverFarmName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "S1",
+                "capacity": 1
+            },
+            "properties": {
+                "name": "[parameters('serverFarmName')]"
+            }
+        },
+        {
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('appServiceName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverFarmName'))]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', providers('serverFarmName'))]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/providers/roleAssignments",
+            "apiVersion": "2018-01-01-preview",
+            "name": "[concat(parameters('keyVaultName'), '/Microsoft.Authorization/', guid(parameters('appServiceName'), variables('keyVaultSecretReaderRoleId')))]",
+            "dependsOn": [
+                "[parameters('appServiceName')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/providers/Microsoft.Authorization/roledefinitions/', variables('keyVaultSecretReaderRoleId'))]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', parameters('appServiceName')), '2019-08-01', 'full').identity.principalId]"
+            }
+        }
+    ]
+}

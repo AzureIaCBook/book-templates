@@ -15,12 +15,12 @@
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[parameters('storageAccountNames')[0]]",
             "sku": {
-                "name": "Standard_GRS",
-                "tier": "Standard"
+                "name": "Standard_GRS"
             },
             "kind": "StorageV2",
             "apiVersion": "2019-04-01",
             "location": "West Europe"
         }
+        
     ]
 }

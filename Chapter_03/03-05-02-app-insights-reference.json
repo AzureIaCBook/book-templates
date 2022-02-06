@@ -1,0 +1,92 @@
+// This tempaltes assumes you have alreade deployed the mentioned Key Vault
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "logAnalyticsWorkspaceName": {
+            "type": "string"
+        },
+        "applicationInsightsName": {
+            "type": "string"
+        },
+        "serverFarmName": {
+            "type": "string"
+        },
+        "appServiceName": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('logAnalyticsWorkspaceName')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2020-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                    "name": "pergb2018"
+                },
+                "retentionInDays": 30,
+                "workspaceCapping": {
+                    "dailyQuotaGb": -1
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-02-02-preview",
+            "name": "[parameters('applicationInsightsName')]",
+            "type": "Microsoft.Insights/components",
+            "kind": "web",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[parameters('logAnalyticsWorkspaceName')]"
+            ],
+            "properties": {
+                "applicationId": "[parameters('applicationInsightsName')]",
+                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+                "Application_Type": "web"
+            }
+        },
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[parameters('serverFarmName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "S1",
+                "capacity": 1
+            },
+            "properties": {
+                "name": "[parameters('serverFarmName')]"
+            }
+        },
+        {
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('appServiceName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[parameters('serverFarmName')]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', providers('serverFarmName'))]"
+            }
+        },
+        {
+            "name": "[concat(parameters('appServiceName'), '/', 'appsettings')]",
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2018-02-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[parameters('appServiceName')]",
+                "[parameters('applicationInsightsName')]"
+            ],
+            "properties": {
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(parameters('applicationInsightsName'), '2018-05-01-preview').InstrumentationKey]"
+            }
+        }
+    ]
+}
