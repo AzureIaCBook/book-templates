@@ -30,15 +30,13 @@
                 {
                     "name": "data",
                     "sku": {
-                        "name": "Standard_LRS",
-                        "tier": "Standard"
+                        "name": "Standard_LRS"
                     }
                 },
                 {
                     "name": "logging",
                     "sku": {
-                        "name": "Standard_LRS",
-                        "tier": "Standard"
+                        "name": "Standard_LRS"
                     }
                 }
             ]

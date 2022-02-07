@@ -9,12 +9,10 @@ param sku string
 
 var premiumSku = {
   name: 'Premium_LRS'
-  tier: 'Premium'
 }
 
 var standardSku = {
   name: 'Standard_LRS'
-  tier: 'Standard'
 }
 
 var skuCalculated = sku == 'Premium' ? premiumSku : standardSku

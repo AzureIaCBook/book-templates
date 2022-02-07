@@ -29,15 +29,13 @@
             "data": {
                 "name": "[concat('starmbookdata', parameters('environment'))]",
                 "sku": {
-                    "name": "Standard_GRS",
-                    "tier": "Premium"
+                    "name": "Standard_GRS"
                 }
             },
             "logging": {
                 "name": "[concat('starmbooklogging', parameters('environment'))]",
                 "sku": {
-                    "name": "Standard_LRS",
-                    "tier": "Premium"
+                    "name": "Standard_LRS"
                 }
             }
         }
@@ -106,7 +104,8 @@
             ],
             "properties": {
                 "applicationId": "[variables('applicationInsightsName')]",
-                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName'))]"
+                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName'))]",
+                "Application_Type": "web"
             }
         },
         {

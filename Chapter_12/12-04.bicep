@@ -6,7 +6,7 @@ resource denyAnySqlServerAccessFromInternet 'Microsoft.Authorization/policyDefin
     displayName: 'Deny Any SQL Server Access from the Internet'
     policyType: 'Custom'
     mode: 'All'
-    description: 'Deny Any SQL Server Access from the Internet ip address'
+    description: 'Deny Any SQL Server Access from the Internet IP address'
     metadata: {
       version: '1.0.0'
       category: 'SQL Server'

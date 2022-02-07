@@ -28,21 +28,17 @@ if (!$pesterModule) {
     }
 }
 
-Write-Host "Pester version: $($pesterModule.Version.Major).$($pesterModule.Version.Minor).$($pesterModule.Version.Build)"
+Write-Host "Pester version: $($pesterModule.Version)"
 $pesterModule | Import-Module
 
 if (!(Test-Path -Path $ResultsPath)) {
     New-Item -Path $ResultsPath -ItemType Directory -Force | Out-Null
 }
 
-Write-Host "Finding tests in $($ModulePath)"
-$tests = (Get-ChildItem -Path $($ModulePath) -Recurse | Where-Object {$_.Name -like "*tests.ps1"}).FullName
+Write-Host "Finding tests in $ModulePath"
+$tests = (Get-ChildItem -Path $ModulePath "*tests.ps1" -Recurse).FullName
 
-$Params = [ordered]@{
-    Path = $tests;
-}
-
-$container = New-PesterContainer @Params
+$container = New-PesterContainer -Path $tests
 
 $configuration = [PesterConfiguration]@{
     Run          = @{

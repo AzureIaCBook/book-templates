@@ -9,8 +9,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('storageName')]",
             "sku": {
-                "name": "Standard_GRS",
-                "tier": "Standard"
+                "name": "Standard_GRS"
             },
             "kind": "StorageV2",
             "apiVersion": "2019-04-01",
