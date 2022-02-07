@@ -1,0 +1,53 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "refresh": {
+            "type": "string"
+        },
+        "clientId": {
+            "type": "string"
+        },
+        "clientSecret": {
+            "type": "securestring"
+        },  
+        "groupName": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "GetADGroupId",
+            "location": "[resourceGroup().location]",
+            "kind": "AzurePowerShell",
+            "properties": {
+                "forceUpdateTag": "[parameters('refresh')]",
+                "azPowerShellVersion": "7.0",
+                "primaryScriptUri": "https://dsexample.blob.core.windows.net/dsscriptcontainer/script.ps1",
+                "supportingScriptUris": [],
+                "environmentVariables": [
+                    {
+                        "name": "clientId",
+                        "secureValue": "[parameters('clientId')]"
+                    },
+                    {
+                        "name": "clientSecret",
+                        "secureValue": "[parameters('clientSecret')]"
+                    }
+                ],
+                "arguments": "[concat('-groupName ''', parameters('groupName'),''' -tenantId ', subscription().tenantId)]",
+                "timeout": "PT10M",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D"
+            }
+        }
+    ],
+    "outputs": {
+        "AadGroupId": {
+            "value": "[reference('GetADGroupId').outputs.groupId]",
+            "type": "string"
+        }
+    }
+}
