@@ -72,7 +72,7 @@ resource compliantNetworkCard 'Microsoft.Network/networkInterfaces@2020-06-01' =
           privateIPAllocationMethod: 'Static'
           privateIPAddress: virtualMachineIpAddress
           subnet: {
-            id: resourceId('Networking.WestEurope.Spoke', 'Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
           }
         }
       }

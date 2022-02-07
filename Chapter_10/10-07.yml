@@ -1,0 +1,23 @@
+steps:
+- task: UniversalPackages@0                                     #A
+  displayName: Download ARM Template Package
+  inputs:
+    command: download
+    feedsToUse: 'internal'
+    vstsFeed: <your-feed-id>'
+    vstsFeedPackage: 'app-service-plan-template'
+    vstsPackageVersion: '*'
+    downloadDirectory: '$(Pipeline.Workspace)'                  #B
+
+- task: AzureResourceManagerTemplateDeployment@3                #C
+  displayName: Deploy ARM Template
+  inputs:
+    azureResourceManagerConnection: 'myArmServiceConnection'
+    deploymentScope: 'Resource Group'
+    subscriptionId: '<your-subscription-id>'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'myResourceGroup'
+    location: 'West Europe'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(Pipeline.Workspace)/08-05.json'
+    overrideParameters: '-appServicePlanName myAppServicePlan'

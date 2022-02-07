@@ -1,23 +1,17 @@
 steps:
-- task: UniversalPackages@0                                     #A
-  displayName: Download ARM Template Package
+- task: CopyFiles@2
+  displayName: 'Copy template spec files to staging location'
   inputs:
-    command: download
-    feedsToUse: 'internal'
-    vstsFeed: <your-feed-id>'
-    vstsFeedPackage: 'app-service-plan-template'
-    vstsPackageVersion: '*'
-    downloadDirectory: '$(Pipeline.Workspace)'                  #B
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '*.json'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-- task: AzureResourceManagerTemplateDeployment@3                #C
-  displayName: Deploy ARM Template
+- task: UniversalPackages@0
+  displayName: 'Publish package'
   inputs:
-    azureResourceManagerConnection: 'myArmServiceConnection'
-    deploymentScope: 'Resource Group'
-    subscriptionId: '<your-subscription-id>'
-    action: 'Create Or Update Resource Group'
-    resourceGroupName: 'myResourceGroup'
-    location: 'West Europe'
-    templateLocation: 'Linked artifact'
-    csmFile: '$(Pipeline.Workspace)/08-05.json'
-    overrideParameters: '-appServicePlanName myAppServicePlan'
+    command: 'publish'
+    publishDirectory: '$(Build.ArtifactStagingDirectory)'
+    feedsToUsePublish: 'internal'
+    vstsFeedPublish: '<your-feed-id>'
+    vstsFeedPackagePublish: 'app-service-plan-template'
+    versionOption: 'patch'
