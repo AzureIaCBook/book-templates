@@ -1,10 +1,10 @@
 targetScope = 'subscription'
 
-resource enforceAscDefenderStoragePolicyDefinition 'Microsoft.Authorization/policyDefinitions@2020-09-01' = {
-  name: 'ascDefenderStorage_deployIfNotExists'
+resource enforceMsDefenderStoragePolicyDefinition 'Microsoft.Authorization/policyDefinitions@2020-09-01' = {
+  name: 'msDefenderStorage_deployIfNotExists'
   properties: {
-    displayName: 'Enforce Asc Defender for Storage'
-    description: 'Enforces Azure Security Center Defender for Storage on subscriptions.'
+    displayName: 'Enforce Microsoft Defender for Storage'
+    description: 'Enforces Microsoft Defender for Storage on subscriptions.'
     mode: 'All'
     policyType: 'Custom'
     policyRule: {
