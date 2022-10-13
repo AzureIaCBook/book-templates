@@ -30,7 +30,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "relativePath": "Configuration.json",
+                    "uri": "[concat(variables('templateBasePath'), '/Composing/Configuration.json')]"
                     "queryString": "[parameters('templateSettings').storageAccountKey]",
                     "contentVersion": "1.0.0.0"
                 },
@@ -57,7 +57,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "relativePath": "Api.json",
+                    "uri": "[concat(variables('templateBasePath'), '/Composing/Api.json')]"
                     "queryString": "[parameters('templateSettings').storageAccountKey]",
                     "contentVersion": "1.0.0.0"
                 },
@@ -90,7 +90,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "relativePath": "Storage.json",
+                    "uri": "[concat(variables('templateBasePath'), '/Composing/Storage.json')]"
                     "queryString": "[parameters('templateSettings').storageAccountKey]",
                     "contentVersion": "1.0.0.0"
                 },
