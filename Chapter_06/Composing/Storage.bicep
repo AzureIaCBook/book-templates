@@ -17,15 +17,8 @@ module storageAccountModules '../Resources/Storage/StorageAccountV2.bicep' = [fo
   params: {
     storageAccount: storageAccountSetting
     env: env
+    keyVaultName: keyVaultName
     location: templateSettings.location
-  }
-}]
-
-resource keyVaultSecrets 'Microsoft.KeyVault/vaults/secrets@2018-02-14' = [for storageAccountSetting in storageAccountSettings:{
-  name: '${keyVaultName}/${storageAccountSetting.name}'
-  dependsOn: storageAccountModules
-  properties: {
-    value: listKeys(resourceId('Microsoft.Storage/storageAccounts', 'stor${storageAccountSetting.name}${env}'), '2019-04-01').keys[0].value
   }
 }]
 

@@ -19,3 +19,5 @@ resource webAppResource 'Microsoft.Web/sites@2018-02-01' = {
     serverFarmId: resourceId('Microsoft.Web/serverfarms', appServicePlanName)
   }
 }
+
+output principalId string = webAppResource.identity.principalId
