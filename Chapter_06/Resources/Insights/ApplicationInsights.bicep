@@ -28,3 +28,5 @@ resource omsWorkspaceResource 'Microsoft.OperationalInsights/workspaces@2020-08-
         }
     }
 }
+
+output instrumentationKey string = applicationInsightsResource.properties.InstrumentationKey

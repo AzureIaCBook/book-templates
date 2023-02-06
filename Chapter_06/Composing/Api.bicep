@@ -43,35 +43,38 @@ module webAppModule '../Resources/WebApp/WebApp.bicep' = {
     appSettings: [
       {
         name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-        value: reference(resourceId('Microsoft.Insights/components', appInsightsName), '2014-04-01').InstrumentationKey
+        value: applicationInsightsModule.outputs.instrumentationKey
       }
     ]
     location: templateSettings.location
   }
   dependsOn: [
     serverFarmModule
-    applicationInsightsModule
   ]
 }
 
-resource SecretReaderResource 'Microsoft.KeyVault/vaults/providers/roleAssignments@2018-01-01-preview' = {
-  name: '${keyVaultName}/Microsoft.Authorization/${guid(webAppName, keyVaultSecretReaderRoleId)}'
-  dependsOn: [
-    webAppModule
-  ]
+resource kv 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
+  name: keyVaultName
+}
+
+resource SecretReaderResource 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(webAppName, keyVaultSecretReaderRoleId)
+  scope: kv
   properties: {
-    roleDefinitionId: '/providers/Microsoft.Authorization/roledefinitions/${keyVaultSecretReaderRoleId}'
-    principalId: reference(resourceId('Microsoft.Web/sites', webAppName), '2019-08-01', 'full').identity.principalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', keyVaultSecretReaderRoleId)
+    principalId: webAppModule.outputs.principalId
   }
 }
 
-resource ConfigurationReaderResource 'Microsoft.AppConfiguration/configurationstores/providers/roleAssignments@2018-01-01-preview' = {
-  name: '${appConfigurationName}/Microsoft.Authorization/${guid(webAppName, appConfigurationReaderRoleId)}'
-  dependsOn: [
-    webAppModule
-  ]
+resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2019-11-01-preview' existing = {
+  name: appConfigurationName
+}
+
+resource ConfigurationReaderResource 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(webAppName, appConfigurationReaderRoleId)
+  scope: appConfiguration
   properties: {
-    roleDefinitionId: '/providers/Microsoft.Authorization/roledefinitions/${appConfigurationReaderRoleId}'
-    principalId: reference(resourceId('Microsoft.Web/sites', webAppName), '2019-08-01', 'full').identity.principalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', appConfigurationReaderRoleId)
+    principalId: webAppModule.outputs.principalId
   }
 }
