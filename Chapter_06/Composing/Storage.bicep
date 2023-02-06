@@ -10,7 +10,6 @@ var SqlDatabaseName = 'sql-bookdemo-${env}'
 // The variable below is part of the translation from ARM to Bicep, but no longer needed
 // as the switch from linked deploments to Bicep modules, makes staging the resource 
 // templates unnecessary. It is left in for reference only.
-var templateBasePath = '${templateSettings.storageAccountUrl}/${templateSettings.storageContainer}'
 
 module storageAccountModules '../Resources/Storage/StorageAccountV2.bicep' = [for storageAccountSetting in storageAccountSettings: {
   name: 'storageAccountModule-${storageAccountSetting.name}'

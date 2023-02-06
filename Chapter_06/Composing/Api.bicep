@@ -14,7 +14,7 @@ var appConfigurationReaderRoleId = '516239f1-63e1-4d78-a4de-a74fb236a071' // RBA
 // The variable below is part of the translation from ARM to Bicep, but no longer needed
 // as the switch from linked deploments to Bicep modules, makes staging the resource 
 // templates unnecessary. It is left in for reference only.
-var templateBasePath = '${templateSettings.storageAccountUrl}/${templateSettings.storageContainer}'
+
 
 
 module applicationInsightsModule '../Resources/Insights/ApplicationInsights.bicep' = {
@@ -62,6 +62,7 @@ resource SecretReaderResource 'Microsoft.Authorization/roleAssignments@2022-04-0
   scope: kv
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', keyVaultSecretReaderRoleId)
+    principalType: 'ServicePrincipal'
     principalId: webAppModule.outputs.principalId
   }
 }
@@ -75,6 +76,7 @@ resource ConfigurationReaderResource 'Microsoft.Authorization/roleAssignments@20
   scope: appConfiguration
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', appConfigurationReaderRoleId)
+    principalType: 'ServicePrincipal'
     principalId: webAppModule.outputs.principalId
   }
 }

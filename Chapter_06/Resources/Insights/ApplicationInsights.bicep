@@ -10,7 +10,7 @@ resource applicationInsightsResource 'Microsoft.Insights/components@2020-02-02-p
   ]
   location: location
   properties: {
-    applicationId: applicationInsightsName
+    Application_Type: 'web'
     WorkspaceResourceId: omsWorkspaceResource.id
   }
 }

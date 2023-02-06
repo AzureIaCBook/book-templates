@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "env": {
-            "value": "testhb"
+            "value": "dev"
         },
         "appServicePlanSku": {
             "value": {
@@ -45,7 +45,7 @@
         },
         "templateSettings": {
             "value": {
-                "location": "westeurope",
+                "location": "eastus2",
                 "storageAccountUrl": "nolongerusedinbicep",
                 "storageContainer": "storageContainer"
             }

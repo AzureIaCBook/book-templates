@@ -4,7 +4,7 @@ param sqlSettings object
 param storageAccountSettings array
 param templateSettings object
 
-var keyVaultName = 'kv-bookdemo-${env}'
+var keyVaultName = 'kv-bookdemoern19-${env}'
 var appConfigurationName = 'appconfig-bookdemo-${env}'
 
 module configurationModule './Configuration.bicep' = {
