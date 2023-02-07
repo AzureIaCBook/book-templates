@@ -4,7 +4,7 @@ param linuxFxVersion string = 'DOTNETCORE|3.1'
 param appSettings array
 param location string
 
-resource webAppResource 'Microsoft.Web/sites@2018-02-01' = {
+resource webAppResource 'Microsoft.Web/sites@2022-03-01' = {
   name: webAppName
   location: location
   kind: 'app,linux'

@@ -3,7 +3,7 @@ param databaseSettings object
 param sqlServerName string
 param location string
 
-resource databaseResource 'Microsoft.Sql/servers/databases@2017-10-01-preview' = {
+resource databaseResource 'Microsoft.Sql/servers/databases@2022-05-01-preview' = {
   name: '${sqlServerName}/${name}'
   location: location
   sku: {
