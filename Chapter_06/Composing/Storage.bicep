@@ -1,11 +1,12 @@
 param env string
+param sufix string
 param keyVaultName string
 param sqlSettings object
 param storageAccountSettings array
 param templateSettings object
 
-var sqlServerName = 'sql-bookdemo-${env}'
-var SqlDatabaseName = 'sql-bookdemo-${env}'
+var sqlServerName = 'sql-${sufix}-${env}'
+var SqlDatabaseName = 'sql-${sufix}-${env}'
 
 // The variable below is part of the translation from ARM to Bicep, but no longer needed
 // as the switch from linked deploments to Bicep modules, makes staging the resource 

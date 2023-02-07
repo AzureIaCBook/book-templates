@@ -5,6 +5,9 @@
         "env": {
             "value": "sta"
         },
+        "sufix": {
+            "value": "ernbookprueba27"
+        },        
         "appServicePlanSku": {
             "value": {
                 "capacity": 1,

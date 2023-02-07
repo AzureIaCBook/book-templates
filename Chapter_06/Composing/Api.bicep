@@ -1,13 +1,14 @@
 param env string
+param sufix string
 param appServicePlanSku object
 param keyVaultName string
 param appConfigurationName string
 param templateSettings object
 
-var logAnalyticsWorkspaceName = 'log-bookdemo-${env}'
-var appInsightsName = 'appi-bookdemo-${env}'
-var webAppName = 'app-bookdemo-${env}'
-var webAppNamePlan = 'plan-bookdemo-${env}'
+var logAnalyticsWorkspaceName = 'log-${sufix}-${env}'  
+var appInsightsName = 'appi-${sufix}-${env}'
+var webAppName = 'app-${sufix}-${env}'
+var webAppNamePlan = 'plan-${sufix}-${env}'
 var keyVaultSecretReaderRoleId = '4633458b-17de-408a-b874-0445c86b69e6' // RBAC Role: Key Vault Secrets User
 var appConfigurationReaderRoleId = '516239f1-63e1-4d78-a4de-a74fb236a071' // RBAC Role: App Configuration Data Reader
 
