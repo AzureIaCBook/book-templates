@@ -5,9 +5,6 @@ param location string
 resource applicationInsightsResource 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: applicationInsightsName
   kind: 'web'
-  dependsOn: [
-    omsWorkspaceResource
-  ]
   location: location
   properties: {
     Application_Type: 'web'
@@ -22,7 +19,7 @@ resource omsWorkspaceResource 'Microsoft.OperationalInsights/workspaces@2020-08-
         sku: {
             name: 'PerGB2018'
         }
-        retentionInDays: 30
+        retentionInDays: 60
         workspaceCapping: {
             dailyQuotaGb: -1
         }

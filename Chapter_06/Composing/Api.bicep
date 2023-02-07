@@ -67,7 +67,7 @@ resource SecretReaderResource 'Microsoft.Authorization/roleAssignments@2022-04-0
   }
 }
 
-resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2019-11-01-preview' existing = {
+resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2022-05-01' existing = {
   name: appConfigurationName
 }
 
