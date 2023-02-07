@@ -12,12 +12,6 @@ var webAppNamePlan = 'plan-${sufix}-${env}'
 var keyVaultSecretReaderRoleId = '4633458b-17de-408a-b874-0445c86b69e6' // RBAC Role: Key Vault Secrets User
 var appConfigurationReaderRoleId = '516239f1-63e1-4d78-a4de-a74fb236a071' // RBAC Role: App Configuration Data Reader
 
-// The variable below is part of the translation from ARM to Bicep, but no longer needed
-// as the switch from linked deploments to Bicep modules, makes staging the resource 
-// templates unnecessary. It is left in for reference only.
-
-
-
 module applicationInsightsModule '../Resources/Insights/ApplicationInsights.bicep' = {
   name: 'applicationInsightsModule'
   params: {

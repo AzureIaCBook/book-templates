@@ -19,7 +19,7 @@ resource omsWorkspaceResource 'Microsoft.OperationalInsights/workspaces@2020-08-
         sku: {
             name: 'PerGB2018'
         }
-        retentionInDays: 60
+        retentionInDays: 30
         workspaceCapping: {
             dailyQuotaGb: -1
         }

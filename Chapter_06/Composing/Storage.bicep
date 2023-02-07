@@ -8,10 +8,6 @@ param templateSettings object
 var sqlServerName = 'sql-${sufix}-${env}'
 var SqlDatabaseName = 'sql-${sufix}-${env}'
 
-// The variable below is part of the translation from ARM to Bicep, but no longer needed
-// as the switch from linked deploments to Bicep modules, makes staging the resource 
-// templates unnecessary. It is left in for reference only.
-
 module storageAccountModules '../Resources/Storage/StorageAccountV2.bicep' = [for storageAccountSetting in storageAccountSettings: {
   name: 'storageAccountModule-${storageAccountSetting.name}'
   params: {

@@ -48,7 +48,7 @@
         },
         "templateSettings": {
             "value": {
-                "location": "eastus2",
+                "location": "westeurope",
                 "storageAccountUrl": "nolongerusedinbicep",
                 "storageContainer": "storageContainer"
             }
