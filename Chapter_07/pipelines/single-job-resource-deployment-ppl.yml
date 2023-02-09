@@ -1,32 +1,20 @@
 trigger:
-- master
-
-name: Deploy Bicep files
-
-variables:
-  vmImageName: 'ubuntu-latest'
-
-  azureServiceConnection: 'scAzureSponsorshipForBicep'
-  resourceGroupName: 'exampleRG'
-  location: 'westeurope'
-  templateFile: './deployment/main.bicep'
-pool:
-  vmImage: $(vmImageName)
+  - main
 
 jobs:
   - job: publishbicep
     displayName: Publish bicep files as pipeline artifacts
     steps:
-      #- bash: az bicep build --file ./deployment/main.bicep
-      #  displayName: "Transpile Bicep"
+      - bash: az bicep build --file ./deployment/main.bicep
+        displayName: "Transpile Bicep"
 
       - task: AzureResourceManagerTemplateDeployment@3
         displayName: Deploy Main Template
         inputs:
-          azureResourceManagerConnection: '$(azureServiceConnection)'
+          azureResourceManagerConnection: "TestEnvironment"
           deploymentScope: "Subscription"
-          location: '$(location)'
+          location: "westeurope"
           templateLocation: "Linked artifact"
-          csmFile: '$(templateFile)'
+          csmFile: "./deployment/main.json"
           csmParametersFile: "./deployment/test.parameters.json"
           deploymentMode: "Incremental"
