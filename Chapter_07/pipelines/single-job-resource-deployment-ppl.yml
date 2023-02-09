@@ -19,8 +19,6 @@ jobs:
     steps:
       #- bash: az bicep build --file ./deployment/main.bicep
       #  displayName: "Transpile Bicep"
-      - bash: ls
-        displayName: "Lista componentes"
 
       - task: AzureResourceManagerTemplateDeployment@3
         displayName: Deploy Main Template
