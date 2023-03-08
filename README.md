@@ -1,6 +1,10 @@
 # Azure Infrastructure as Code
 This repository contains all Bicep, ARM templates, and scripts used in the book [Azure Infrastructure as Code](https://www.manning.com/books/azure-infrastructure-as-code) written by [Henry Been](https://www.linkedin.com/in/henrybeen/), [Erwin Staal](https://www.linkedin.com/in/erwinstaal/) and [Eduard Keilholz](https://www.linkedin.com/in/eduard-keilholz/)
 
+# Versions of this repository
+- Main branch which is, when needed, updated to ensure examples keep compiling even with Microsoft updates. Find it at: [Main](https://github.com/AzureIaCBook/book-templates/tree/main) 
+- Release branch which contains the code as-published in the book. Find it at: [Release Branch 'as-in-book'](https://github.com/AzureIaCBook/book-templates/tree/releases/as-in-book) 
+
 ## Required tooling
 - Install [Visual Studio Code](https://code.visualstudio.com/download) 
 - Add Visual Studio Code extensions:
