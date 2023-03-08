@@ -5,6 +5,9 @@
         "env": {
             "value": "testhb"
         },
+        "sufix": {
+            "value": "bookdemo"
+        },        
         "appServicePlanSku": {
             "value": {
                 "capacity": 1,

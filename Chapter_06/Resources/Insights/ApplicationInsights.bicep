@@ -2,15 +2,12 @@ param applicationInsightsName string
 param logAnalyticsWorkspaceName string
 param location string
 
-resource applicationInsightsResource 'Microsoft.Insights/components@2020-02-02-preview' = {
+resource applicationInsightsResource 'Microsoft.Insights/components@2020-02-02' = {
   name: applicationInsightsName
   kind: 'web'
-  dependsOn: [
-    omsWorkspaceResource
-  ]
   location: location
   properties: {
-    applicationId: applicationInsightsName
+    Application_Type: 'web'
     WorkspaceResourceId: omsWorkspaceResource.id
   }
 }

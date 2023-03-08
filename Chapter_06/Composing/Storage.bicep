@@ -1,16 +1,12 @@
 param env string
+param sufix string
 param keyVaultName string
 param sqlSettings object
 param storageAccountSettings array
 param templateSettings object
 
-var sqlServerName = 'sql-bookdemo-${env}'
-var SqlDatabaseName = 'sql-bookdemo-${env}'
-
-// The variable below is part of the translation from ARM to Bicep, but no longer needed
-// as the switch from linked deploments to Bicep modules, makes staging the resource 
-// templates unnecessary. It is left in for reference only.
-var templateBasePath = '${templateSettings.storageAccountUrl}/${templateSettings.storageContainer}'
+var sqlServerName = 'sql-${sufix}-${env}'
+var SqlDatabaseName = 'sql-${sufix}-${env}'
 
 module storageAccountModules '../Resources/Storage/StorageAccountV2.bicep' = [for storageAccountSetting in storageAccountSettings: {
   name: 'storageAccountModule-${storageAccountSetting.name}'

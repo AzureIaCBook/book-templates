@@ -1,21 +1,16 @@
 param env string
+param sufix string
 param appServicePlanSku object
 param keyVaultName string
 param appConfigurationName string
 param templateSettings object
 
-var logAnalyticsWorkspaceName = 'log-bookdemo-${env}'
-var appInsightsName = 'appi-bookdemo-${env}'
-var webAppName = 'app-bookdemo-${env}'
-var webAppNamePlan = 'plan-bookdemo-${env}'
+var logAnalyticsWorkspaceName = 'log-${sufix}-${env}'  
+var appInsightsName = 'appi-${sufix}-${env}'
+var webAppName = 'app-${sufix}-${env}'
+var webAppNamePlan = 'plan-${sufix}-${env}'
 var keyVaultSecretReaderRoleId = '4633458b-17de-408a-b874-0445c86b69e6' // RBAC Role: Key Vault Secrets User
 var appConfigurationReaderRoleId = '516239f1-63e1-4d78-a4de-a74fb236a071' // RBAC Role: App Configuration Data Reader
-
-// The variable below is part of the translation from ARM to Bicep, but no longer needed
-// as the switch from linked deploments to Bicep modules, makes staging the resource 
-// templates unnecessary. It is left in for reference only.
-var templateBasePath = '${templateSettings.storageAccountUrl}/${templateSettings.storageContainer}'
-
 
 module applicationInsightsModule '../Resources/Insights/ApplicationInsights.bicep' = {
   name: 'applicationInsightsModule'
@@ -62,11 +57,12 @@ resource SecretReaderResource 'Microsoft.Authorization/roleAssignments@2022-04-0
   scope: kv
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', keyVaultSecretReaderRoleId)
+    principalType: 'ServicePrincipal'
     principalId: webAppModule.outputs.principalId
   }
 }
 
-resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2019-11-01-preview' existing = {
+resource appConfiguration 'Microsoft.AppConfiguration/configurationStores@2022-05-01' existing = {
   name: appConfigurationName
 }
 
@@ -75,6 +71,7 @@ resource ConfigurationReaderResource 'Microsoft.Authorization/roleAssignments@20
   scope: appConfiguration
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', appConfigurationReaderRoleId)
+    principalType: 'ServicePrincipal'
     principalId: webAppModule.outputs.principalId
   }
 }

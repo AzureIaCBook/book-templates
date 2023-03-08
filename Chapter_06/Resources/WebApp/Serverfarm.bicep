@@ -2,7 +2,7 @@ param name string
 param sku object
 param location string
 
-resource myServerFarmResource 'Microsoft.Web/serverfarms@2015-08-01' = {
+resource myServerFarmResource 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: name
   kind: 'linux'
   location: location
@@ -11,9 +11,6 @@ resource myServerFarmResource 'Microsoft.Web/serverfarms@2015-08-01' = {
     capacity: sku.capacity
   }
   properties: {
-    name: name
-    workerSizeId: '1'
-    reserved: true
-    numberOfWorkers: 1
+    reserved: true    
   }
 }

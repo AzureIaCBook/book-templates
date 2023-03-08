@@ -4,7 +4,7 @@ param sqlServerUsername string
 param sqlServerPassword string
 param location string
 
-resource mySqlServerResource 'Microsoft.Sql/servers@2015-05-01-preview' = {
+resource mySqlServerResource 'Microsoft.Sql/servers@2022-05-01-preview' = {
   name: name
   location: location
   properties: {
